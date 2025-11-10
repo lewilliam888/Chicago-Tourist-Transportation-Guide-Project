@@ -2,7 +2,7 @@
 
 A web application that helps tourists find the nearest CTA public transit stops to Chicago's official landmarks.
 
-[Live Demo](https://chicago-tourist-transportation-guide-project-pwxqjuwf8p5rajypt.streamlit.app/)
+[Live Demo](https://chicago-tourist-transportation-guide.streamlit.app/)
 
 ## 📖 Project Overview
 
@@ -55,7 +55,7 @@ This project demonstrates:
 
 ## 🔗 Links
 
-- **Live Application**: [Chicago Tourist Transportation Guide](https://chicago-tourist-transportation-guide-project-pwxqjuwf8p5rajypt.streamlit.app/)
+- **Live Application**: [Chicago Tourist Transportation Guide](https://chicago-tourist-transportation-guide.streamlit.app/)
 - **GitHub Repository**: [View Code](https://github.com/lewilliam888/Chicago-Tourist-Transportation-Guide-Project)
 
 ## 👨‍💻 Developer
