@@ -1,0 +1,13 @@
+name: chicago_transportation_streamlit
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.8
+  - pip
+  - pip:
+      - streamlit==1.34.0
+      - pandas==2.0.3
+      - folium==0.16.0
+      - streamlit-folium==0.22.1
+      - geopy==2.4.1
