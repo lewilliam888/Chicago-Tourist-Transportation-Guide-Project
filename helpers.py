@@ -26,7 +26,7 @@ def load_l_stops(url):
     # Extract latitude and longitude from location field
     df['latitude'] = df['location'].apply(lambda x: float(x['latitude']) if isinstance(x, dict) and 'latitude' in x else None)
     df['longitude'] = df['location'].apply(lambda x: float(x['longitude']) if isinstance(x, dict) and 'longitude' in x else None)
-    
+
     # Extract L line colors (red, blue, green, etc.)
     line_colors = []
     for _, row in df.iterrows():
@@ -205,6 +205,7 @@ def get_closest_stop(landmark_latlon, df):
 
 # Define the function to create a map showing landmark and transit stop
 def create_transit_map(landmark_lat, landmark_lon, landmark_name, stop_lat, stop_lon, stop_name, stop_type, routes):
+
     """Create a folium map with markers for the landmark and transit stop"""
     # Calculate center point
     center_lat = (landmark_lat + stop_lat) / 2

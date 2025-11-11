@@ -153,11 +153,6 @@ st.sidebar.write(f"Total L Stations: {len(train_df)}")
 st.sidebar.write(f"Total Bus Stops: {len(bus_df)}")
 st.sidebar.write(f"Total Transit Stops: {len(transit_df)}")
 
-# Debug: Show what stop types exist
-if len(bus_df) == 0:
-    st.sidebar.warning("⚠️ Bus stops did not load properly")
-st.sidebar.caption(f"Stop types in data: {transit_df['stop_type'].unique().tolist()}")
-
 # Footer
 st.markdown("---")
 st.markdown("*Data sources: City of Chicago Data Portal - CTA L Stops, CTA Bus Stops, and Individual Landmarks*")
