@@ -5,7 +5,6 @@ import folium
 from streamlit_folium import st_folium
 import helpers
 
-# Page configuration
 st.set_page_config(
     page_title="Chicago Tourist Transport Guide",
     page_icon="🚇",
@@ -27,9 +26,7 @@ with st.spinner("Loading Chicago landmarks and transit data..."):
     landmark_df = helpers.load_landmarks(landmark_url)
     transit_df = helpers.combine_transit_stops(train_df, bus_df)
 
-# Rename columns for consistency with helper functions
 transit_df = transit_df.rename(columns={'latitude': 'lat', 'longitude': 'lon'})
-# Reset index to ensure continuous indexing after combining
 transit_df = transit_df.reset_index(drop=True)
 
 # Check if data loaded successfully
@@ -96,8 +93,9 @@ with col2:
     st.info(closest_stop[3])
     
 with col3:
-    st.markdown("**Distance**")
-    st.info(f"{closest_stop[5]:.2f} mi")
+    walking_time = helpers.calculate_walking_time(closest_stop[5])
+    st.markdown("**Walking Time**")
+    st.info(walking_time)
 
 with col4:
     st.markdown("**Stop Type**")
@@ -129,13 +127,17 @@ with st.expander("ℹ️ Detailed Information"):
         st.write(f"- **Coordinates:** {landmark_info['latitude']:.6f}, {landmark_info['longitude']:.6f}")
     
     with col_b:
+        fare = helpers.get_fare_info(closest_stop[4])
+        walking_time = helpers.calculate_walking_time(closest_stop[5])
         st.write("**Transit Stop Details:**")
         st.write(f"- **Stop Name:** {closest_stop[3]}")
         st.write(f"- **Stop Type:** {closest_stop[4]}")
         st.write(f"- **Routes:** {closest_stop[6]}")
+        st.write(f"- **Fare:** {fare}")
         st.write(f"- **Stop ID:** {closest_stop[0]}")
         st.write(f"- **Coordinates:** {closest_stop[1]:.6f}, {closest_stop[2]:.6f}")
         st.write(f"- **Walking Distance:** {closest_stop[5]:.4f} miles ({closest_stop[5] * 1.60934:.4f} km)")
+        st.write(f"- **Estimated Walking Time:** {walking_time}")
 
 # Information about transit types
 st.sidebar.markdown("---")
