@@ -234,23 +234,25 @@ def create_transit_map(landmark_lat, landmark_lon, landmark_name, stop_lat, stop
         dash_array='10'
     ).add_to(m)
 
-    # NEW FEATURE: Average walking times
-    def calculate_walking_time(distance_miles):
-        minutes = distance_miles * 20
-        if minutes < 1:
-            return "Less than 1 minute walk"
-        elif minutes < 60:
-            return f"~{int(minutes)} minute walk"
-        else:
-            hours = int(minutes // 60)
-            mins = int(minutes % 60)
-            return f"~{hours}h {mins}min walk"
-    
-    # NEW FEATURE: Fare prices
-    FARES = {
-        "L Train": "$2.50",
-        "Bus": "$2.25",
-        "Transfer": "$0.25 (within 2 hours)"
-    }
-
     return m
+
+# NEW FEATURE: Average walking times
+def calculate_walking_time(distance_miles):
+    minutes = distance_miles * 20
+    if minutes < 1:
+        return "Less than 1 minute walk"
+    elif minutes < 60:
+        return f"~{int(minutes)} minute walk"
+    else:
+        hours = int(minutes // 60)
+        mins = int(minutes % 60)
+        return f"~{hours}h {mins}min walk"
+    
+# NEW FEATURE: Fare prices
+def get_fare_info(stop_type):
+    """Return fare information based on transit type"""
+    fares = {
+        "L Train Station": "$2.50",
+        "Bus Stop": "$2.25"
+    }
+    return fares.get(stop_type, "$2.50")
