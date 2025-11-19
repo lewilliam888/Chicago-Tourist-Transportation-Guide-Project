@@ -1,33 +1,32 @@
-import streamlit as st  # Import Streamlit for creating web apps
-import urllib.request  # Import module for working with URLs
-import json  # Import module for working with JSON data
-import pandas as pd  # Import pandas for data manipulation
-import folium  # Import folium for creating interactive maps
-from geopy.distance import geodesic  # Import geodesic for calculating distances
-from geopy.geocoders import Nominatim  # Import Nominatim for geocoding
+import streamlit as st 
+import urllib.request 
+import json 
+import pandas as pd 
+import folium 
+from geopy.distance import geodesic 
+from geopy.geocoders import Nominatim 
 
-@st.cache_data  # Cache the function's output to improve performance
+@st.cache_data 
 # Define the function to load L train stops from a given URL
 def load_l_stops(url):
-    # Use the correct resource endpoint
     resource_url = "https://data.cityofchicago.org/resource/8pix-ypme.json?$limit=5000"
     
     req = urllib.request.Request(resource_url)
     req.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36')
-    with urllib.request.urlopen(req) as data_url:  # Open the URL
-        data = json.loads(data_url.read().decode())  # Read and decode the JSON data
+    with urllib.request.urlopen(req) as data_url:
+        data = json.loads(data_url.read().decode()) 
 
-    df = pd.DataFrame(data)  # Convert the data to a DataFrame
+    df = pd.DataFrame(data)
     
     # Extract station information from the JSON structure
-    df['stop_id'] = df['stop_id']  # Station ID
-    df['stop_name'] = df['station_descriptive_name']  # Use descriptive station name
+    df['stop_id'] = df['stop_id'] 
+    df['stop_name'] = df['station_descriptive_name']
     
     # Extract latitude and longitude from location field
     df['latitude'] = df['location'].apply(lambda x: float(x['latitude']) if isinstance(x, dict) and 'latitude' in x else None)
     df['longitude'] = df['location'].apply(lambda x: float(x['longitude']) if isinstance(x, dict) and 'longitude' in x else None)
 
-    # Extract L line colors (red, blue, green, etc.)
+    # Extract L line colors
     line_colors = []
     for _, row in df.iterrows():
         colors = []
@@ -53,33 +52,31 @@ def load_l_stops(url):
 
     df['routes'] = line_colors
 
-    df = df[['stop_id', 'stop_name', 'latitude', 'longitude', 'routes']]  # Select relevant columns
-    df = df.dropna()  # Remove rows with missing data
-    df = df.drop_duplicates(['stop_id'])  # Remove duplicate stations
-    df['stop_type'] = 'L Train Station'  # Add stop type
+    df = df[['stop_id', 'stop_name', 'latitude', 'longitude', 'routes']] 
+    df = df.dropna()
+    df = df.drop_duplicates(['stop_id'])
+    df['stop_type'] = 'L Train Station' 
     
-    return df  # Return the DataFrame
+    return df 
 
-@st.cache_data  # Cache the function's output to improve performance
+@st.cache_data
 # Define the function to load bus stops from a given URL
 def load_bus_stops(url):
-    # Use the CORRECT resource endpoint - qs84-j7wh not hvnx-qtky
     resource_url = "https://data.cityofchicago.org/resource/qs84-j7wh.json?$limit=20000"
     
     req = urllib.request.Request(resource_url)
     req.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36')
     
     try:
-        with urllib.request.urlopen(req) as data_url:  # Open the URL
-            raw_response = data_url.read().decode()  # Read and decode
-            data = json.loads(raw_response)  # Parse JSON
+        with urllib.request.urlopen(req) as data_url:
+            raw_response = data_url.read().decode()
+            data = json.loads(raw_response)
     except Exception as e:
         st.error(f"Error loading bus stops: {e}")
         return pd.DataFrame(columns=['stop_id', 'stop_name', 'latitude', 'longitude', 'stop_type'])
     
     # Check if data is a dict with nested data
     if isinstance(data, dict):
-        # Maybe the actual data is nested under a key?
         if 'data' in data:
             data = data['data']
         elif 'results' in data:
@@ -95,17 +92,15 @@ def load_bus_stops(url):
     for record in data:
         try:
             if isinstance(record, dict):
-                # Bus stops use 'the_geom' with coordinates array [longitude, latitude]
                 if 'the_geom' in record and 'coordinates' in record['the_geom']:
                     coords = record['the_geom']['coordinates']
                     processed_data.append({
                         'stop_id': record.get('systemstop', str(len(processed_data))),
                         'stop_name': record.get('public_nam', 'Bus Stop'),
-                        'latitude': float(coords[1]),  # coordinates are [lon, lat]
+                        'latitude': float(coords[1]),
                         'longitude': float(coords[0]),
-                        'routes': record.get('routesstpg', 'Unknown')  # Bus routes
+                        'routes': record.get('routesstpg', 'Unknown')
                     })
-                # Also check for 'location' format (in case some records use it)
                 elif 'location' in record:
                     location = record['location']
                     if isinstance(location, dict) and 'latitude' in location and 'longitude' in location:
@@ -132,33 +127,32 @@ def load_bus_stops(url):
 @st.cache_data  # Cache the function's output to improve performance
 # Define the function to load landmarks from a given URL
 def load_landmarks(url):
-    # Use the correct resource endpoint
     resource_url = "https://data.cityofchicago.org/resource/tdab-kixi.json?$limit=5000"
     
     req = urllib.request.Request(resource_url)
     req.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36')
-    with urllib.request.urlopen(req) as data_url:  # Open the URL
-        data = json.loads(data_url.read().decode())  # Read and decode the JSON data
+    with urllib.request.urlopen(req) as data_url:
+        data = json.loads(data_url.read().decode())
 
-    df = pd.DataFrame(data)  # Convert the data to a DataFrame
+    df = pd.DataFrame(data)
     
     # Extract landmark information from the JSON structure
-    df['landmark_id'] = df['id']  # Landmark ID
-    df['landmark_name'] = df['landmark_name']  # Landmark name
-    df['address'] = df['address']  # Address
-    df['latitude'] = df['latitude'].apply(lambda x: float(x) if x else None)  # Latitude
-    df['longitude'] = df['longitude'].apply(lambda x: float(x) if x else None)  # Longitude
+    df['landmark_id'] = df['id']
+    df['landmark_name'] = df['landmark_name']
+    df['address'] = df['address']
+    df['latitude'] = df['latitude'].apply(lambda x: float(x) if x else None)
+    df['longitude'] = df['longitude'].apply(lambda x: float(x) if x else None)
     
-    df = df[['landmark_id', 'landmark_name', 'address', 'latitude', 'longitude']]  # Select relevant columns
-    df = df.dropna(subset=['latitude', 'longitude', 'landmark_name'])  # Remove rows with missing data
-    df = df.drop_duplicates(['landmark_id'])  # Remove duplicates
+    df = df[['landmark_id', 'landmark_name', 'address', 'latitude', 'longitude']]
+    df = df.dropna(subset=['latitude', 'longitude', 'landmark_name']) 
+    df = df.drop_duplicates(['landmark_id']) 
     
-    return df  # Return the DataFrame
+    return df
 
 # Define the function to combine transit stops
 def combine_transit_stops(df1, df2):
-    df = pd.concat([df1, df2], ignore_index=True)  # Combine the DataFrames
-    return df  # Return the combined DataFrame
+    df = pd.concat([df1, df2], ignore_index=True)
+    return df
 
 # Function to determine marker color based on the type of stop
 def get_marker_color(stop_type):
@@ -169,17 +163,16 @@ def get_marker_color(stop_type):
 
 # Define the function to geocode an address
 def geocode(address):
-    geolocator = Nominatim(user_agent="chicago-transport-guide")  # Create a geolocator object
-    location = geolocator.geocode(address)  # Geocode the address
+    geolocator = Nominatim(user_agent="chicago-transport-guide")
+    location = geolocator.geocode(address)
     if location is None:
-        return ''  # Return an empty string if the address is not found
+        return '' 
     else:
-        return (location.latitude, location.longitude)  # Return the latitude and longitude
+        return (location.latitude, location.longitude)
 
 # Define the function to get the closest transit stop to a landmark
 def get_closest_stop(landmark_latlon, df):
     """Calculate distance from each stop to the landmark and return a single stop id, lat, lon"""
-    # Vectorized distance calculation for better performance
     df = df.copy()
     
     # Calculate all distances at once using vectorized operations
@@ -193,13 +186,13 @@ def get_closest_stop(landmark_latlon, df):
     closest = df.loc[closest_idx]
     
     chosen_stop = []
-    chosen_stop.append(closest['stop_id'])  # Get closest stop ID
-    chosen_stop.append(closest['lat'])  # Get latitude
-    chosen_stop.append(closest['lon'])  # Get longitude
-    chosen_stop.append(closest['stop_name'])  # Get stop name
-    chosen_stop.append(closest['stop_type'])  # Get stop type
-    chosen_stop.append(closest['distance'])  # Get distance
-    chosen_stop.append(closest.get('routes', 'Unknown'))  # Get routes
+    chosen_stop.append(closest['stop_id'])
+    chosen_stop.append(closest['lat'])
+    chosen_stop.append(closest['lon'])
+    chosen_stop.append(closest['stop_name'])
+    chosen_stop.append(closest['stop_type'])
+    chosen_stop.append(closest['distance'])
+    chosen_stop.append(closest.get('routes', 'Unknown'))
 
     return chosen_stop  # Return the chosen stop
 
@@ -240,5 +233,24 @@ def create_transit_map(landmark_lat, landmark_lon, landmark_name, stop_lat, stop
         opacity=0.7,
         dash_array='10'
     ).add_to(m)
+
+    # NEW FEATURE: Average walking times
+    def calculate_walking_time(distance_miles):
+        minutes = distance_miles * 20
+        if minutes < 1:
+            return "Less than 1 minute walk"
+        elif minutes < 60:
+            return f"~{int(minutes)} minute walk"
+        else:
+            hours = int(minutes // 60)
+            mins = int(minutes % 60)
+            return f"~{hours}h {mins}min walk"
     
-    return m  # Return the map
+    # NEW FEATURE: Fare prices
+    FARES = {
+        "L Train": "$2.50",
+        "Bus": "$2.25",
+        "Transfer": "$0.25 (within 2 hours)"
+    }
+
+    return m
