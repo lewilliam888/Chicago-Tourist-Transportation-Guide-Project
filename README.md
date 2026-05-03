@@ -1,65 +1,57 @@
-# 🚇 Chicago Tourist Transportation Guide
+# Chicago Tourist Transportation Guide
 
-A web application that helps tourists find the nearest CTA public transit stops to Chicago's official landmarks.
+An interactive Streamlit app for exploring Chicago's 317 historic landmarks alongside the CTA transit network. Two modes: find the nearest transit stop to any landmark, or use DBSCAN clustering to identify walkable neighborhoods of nearby attractions.
 
-[Live Demo](https://chicago-tourist-transportation-guide.streamlit.app/)
+**Live demo:** https://chicago-tourist-transportation-guide.streamlit.app/
 
-## 📖 Project Overview
+## What it does
 
-This interactive web app allows users to select from 317 Chicago landmarks and instantly find the closest CTA transit stop - whether it's an L train station or bus stop. The app displays the distance, shows an interactive map, and provides detailed information about both locations.
+The app pulls real-time data from three City of Chicago Open Data endpoints — 302 L train stations, 10,760+ bus stops, and 317 designated landmarks — and lets users interact with it in two ways.
 
-**Built with:** Python, Streamlit, Pandas, Folium, GeoPy
+The **nearest transit** mode takes a selected landmark, calculates geodesic distance to every transit stop, and returns the closest one along with walking time, fare, and a folium map showing both points connected by a line.
 
-## Key Features
+The **walkable neighborhoods** mode runs DBSCAN clustering on landmark coordinates to surface natural groupings of attractions within walking distance of each other. Users can tune the maximum walking distance (`eps`) and minimum cluster size (`min_samples`) with sliders to see how the cluster structure changes.
 
-- 🗺️ **Interactive Maps** - Visualize landmarks and transit stops with custom markers and connecting lines
-- 🚇 **302 L Train Stations** - Complete CTA elevated train network
-- 🚌 **10,760+ Bus Stops** - Full CTA bus stop coverage
-- 📍 **317 Historic Landmarks** - Official Chicago individual landmarks
-- 🎯 **Smart Filtering** - Choose to search only L trains, only buses, or both
-- 📏 **Accurate Distance Calculations** - Uses geodesic distance for real walking distances
-- ⚡ **Optimized Performance** - Vectorized calculations handle 11,000+ data points efficiently
+## Why DBSCAN
 
-*Select a landmark, choose your preferred transit type, and instantly see the nearest stop with distance and map.*
+DBSCAN was chosen over K-Means because the goal is to find *natural* clusters of nearby landmarks without specifying how many should exist. K-Means would force every landmark into a cluster and require choosing `k` upfront; DBSCAN identifies dense regions and treats isolated landmarks as noise (label `-1`), which is closer to how someone would actually plan a walking tour.
 
-## 🛠️ Technical Implementation
+The clustering uses **haversine distance** rather than Euclidean. Euclidean distance on raw lat/lon coordinates distorts at any latitude away from the equator — at Chicago's latitude (~41.9°N), one degree of longitude is roughly 0.74× the distance of one degree of latitude, so a Euclidean clusterer would treat east-west neighbors as artificially closer than north-south ones. Haversine handles this correctly by treating coordinates as points on a sphere.
 
-### Technologies Used
-- **Streamlit** - Web framework for rapid application development
-- **Pandas** - Data manipulation and analysis
-- **Folium** - Interactive map visualizations
-- **GeoPy** - Geospatial distance calculations
-- **Python 3.11** - Core programming language
+The `eps` parameter is exposed in miles for usability and converted to radians internally (`eps_miles / 3958.8`, where 3958.8 is Earth's radius in miles) since scikit-learn's haversine implementation expects radians.
 
-### Data Sources
-All data sourced from the [City of Chicago Data Portal](https://data.cityofchicago.org/):
-- [CTA L Stops](https://data.cityofchicago.org/Transportation/CTA-System-Information-List-of-L-Stops/8pix-ypme) (302 stations)
-- [CTA Bus Stops](https://data.cityofchicago.org/Transportation/CTA-Bus-Stops-Shapefile/qs84-j7wh) (10,760+ stops)
-- [Individual Landmarks](https://data.cityofchicago.org/Historic-Preservation/Individual-Landmarks/tdab-kixi) (317 landmarks)
+## Stack
 
-### Architecture
-- **`app.py`** - Main Streamlit UI with user controls, metrics display, and map rendering
-- **`helpers.py`** - Data loading from APIs, distance calculations, and map generation
-- Real-time data fetching via Socrata Open Data API
-- Streamlit caching for performance optimization
-- Vectorized operations for efficient distance calculations across 11,000+ stops
+- Streamlit for the UI and deployment
+- scikit-learn for DBSCAN
+- pandas + numpy for data handling
+- folium + streamlit-folium for the maps
+- geopy for geodesic distance calculations
+- Data from the [City of Chicago Open Data Portal](https://data.cityofchicago.org/) via the Socrata API
 
-## 🎯 Project Goals & Learning Outcomes
+## Repo layout
 
-This project demonstrates:
-- **API Integration** - Fetching and processing real-time data from public APIs
-- **Geospatial Analysis** - Calculating distances and working with coordinate systems
-- **Data Optimization** - Handling large datasets (10,000+ records) efficiently
-- **UI/UX Design** - Creating an intuitive interface for non-technical users
-- **Web Deployment** - Deploying a production-ready app on Streamlit Cloud
+```
+.
+├── app.py            # Streamlit UI, mode toggle, layout
+├── helpers.py        # API loaders, distance calcs, DBSCAN, map builders
+├── requirements.txt
+└── README.md
+```
 
-## 🔗 Links
+## Running locally
 
-- **Live Application**: [Chicago Tourist Transportation Guide](https://chicago-tourist-transportation-guide.streamlit.app/)
-- **GitHub Repository**: [View Code](https://github.com/lewilliam888/Chicago-Tourist-Transportation-Guide-Project)
+```bash
+git clone https://github.com/lewilliam888/Chicago-Tourist-Transportation-Guide-Project.git
+cd Chicago-Tourist-Transportation-Guide-Project
+pip install -r requirements.txt
+streamlit run app.py
+```
 
-## 👨‍💻 Developer
+The first load takes a few seconds while the three datasets are fetched and cached.
 
-**William Le**
+## Notes & limitations
 
----
+The "Individual Landmarks" dataset is Chicago's official historic preservation list — it includes architecturally significant buildings like the Manhattan Building and Union Station, but not modern tourist attractions like Millennium Park or Navy Pier. The app is most useful for architecture-focused exploration.
+
+Walking time estimates assume a 3 mph pace and don't account for elevation, intersections, or the actual pedestrian network.
