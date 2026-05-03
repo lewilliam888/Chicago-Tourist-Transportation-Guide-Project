@@ -35,109 +35,139 @@ if landmark_df is None or transit_df is None or len(landmark_df) == 0 or len(tra
     st.stop()
 
 # Sidebar for landmark selection
-st.sidebar.header("Select a Landmark")
-st.sidebar.markdown("Choose from Chicago's official landmarks:")
-
-landmark_names = sorted(landmark_df['landmark_name'].unique())
-
-selected_landmark = st.sidebar.selectbox(
-    "Choose a landmark:",
-    landmark_names,
+st.sidebar.header("Mode")
+app_mode = st.sidebar.radio(
+    "Choose a view:",
+    ["Find Nearest Transit", "Explore Walkable Neighborhoods"],
     index=0
 )
 
-# Add transit type filter
 st.sidebar.markdown("---")
-st.sidebar.subheader("Transit Type Preference")
-transit_type_filter = st.sidebar.radio(
-    "Find nearest:",
-    ["Any Transit Stop", "L Train Station Only", "Bus Stop Only"],
-    index=0
-)
 
-# Find the landmark information
-landmark_info = landmark_df[landmark_df['landmark_name'] == selected_landmark].iloc[0]
-landmark_latlon = (landmark_info['latitude'], landmark_info['longitude'])
+if app_mode == "Find Nearest Transit":
+    st.sidebar.header("Select a Landmark")
+    st.sidebar.markdown("Choose from Chicago's official landmarks:")
 
-# Filter transit stops based on user preference
-if transit_type_filter == "L Train Station Only":
-    filtered_transit_df = transit_df[transit_df['stop_type'] == 'L Train Station'].copy()
+    landmark_names = sorted(landmark_df['landmark_name'].unique())
+    selected_landmark = st.sidebar.selectbox(
+        "Choose a landmark:",
+        landmark_names,
+        index=0
+    )
+
+    st.sidebar.markdown("---")
+    st.sidebar.subheader("Transit Type Preference")
+    transit_type_filter = st.sidebar.radio(
+        "Find nearest:",
+        ["Any Transit Stop", "L Train Station Only", "Bus Stop Only"],
+        index=0
+    )
+
+    landmark_info = landmark_df[landmark_df['landmark_name'] == selected_landmark].iloc[0]
+    landmark_latlon = (landmark_info['latitude'], landmark_info['longitude'])
+
+    if transit_type_filter == "L Train Station Only":
+        filtered_transit_df = transit_df[transit_df['stop_type'] == 'L Train Station'].copy()
+    elif transit_type_filter == "Bus Stop Only":
+        filtered_transit_df = transit_df[transit_df['stop_type'] == 'Bus Stop'].copy()
+    else:
+        filtered_transit_df = transit_df.copy()
     filtered_transit_df = filtered_transit_df.reset_index(drop=True)
-elif transit_type_filter == "Bus Stop Only":
-    filtered_transit_df = transit_df[transit_df['stop_type'] == 'Bus Stop'].copy()
-    filtered_transit_df = filtered_transit_df.reset_index(drop=True)
-else:  # "Any Transit Stop"
-    filtered_transit_df = transit_df.copy()
-    filtered_transit_df = filtered_transit_df.reset_index(drop=True)
 
-# Check if filtered results are empty
-if len(filtered_transit_df) == 0:
-    st.error(f"❌ No {transit_type_filter.lower()} found in the dataset. Please select a different transit type.")
-    st.info(f"Available transit types: {transit_df['stop_type'].unique().tolist()}")
-    st.stop()
+    if len(filtered_transit_df) == 0:
+        st.error(f"❌ No {transit_type_filter.lower()} found in the dataset.")
+        st.stop()
 
-# Find the closest stop from filtered results
-closest_stop = helpers.get_closest_stop(landmark_latlon, filtered_transit_df)
+    closest_stop = helpers.get_closest_stop(landmark_latlon, filtered_transit_df)
 
-# Display information in columns
-st.subheader("📍 Selected Landmark & Nearest Transit Stop")
-
-col1, col2, col3, col4 = st.columns([2, 3, 1, 2])
-
-with col1:
-    st.markdown("**Landmark**")
-    st.info(selected_landmark)
-    
-with col2:
-    st.markdown("**Nearest Stop**")
-    st.info(closest_stop[3])
-    
-with col3:
-    walking_time = helpers.calculate_walking_time(closest_stop[5])
-    st.markdown("**Walking Time**")
-    st.info(walking_time)
-
-with col4:
-    st.markdown("**Stop Type**")
-    st.info(closest_stop[4])
-
-# Create and display the map
-st.subheader("🗺️ Location Map")
-map_obj = helpers.create_transit_map(
-    landmark_info['latitude'], 
-    landmark_info['longitude'],
-    landmark_info['landmark_name'],
-    closest_stop[1],
-    closest_stop[2],
-    closest_stop[3],
-    closest_stop[4],
-    closest_stop[6]
-)
-st_folium(map_obj, width=1400, height=600)
-
-# Additional information in expandable section
-with st.expander("ℹ️ Detailed Information"):
-    col_a, col_b = st.columns(2)
-    
-    with col_a:
-        st.write("**Landmark Details:**")
-        st.write(f"- **Name:** {landmark_info['landmark_name']}")
-        if 'address' in landmark_info and pd.notna(landmark_info['address']):
-            st.write(f"- **Address:** {landmark_info['address']}")
-        st.write(f"- **Coordinates:** {landmark_info['latitude']:.6f}, {landmark_info['longitude']:.6f}")
-    
-    with col_b:
-        fare = helpers.get_fare_info(closest_stop[4])
+    st.subheader("📍 Selected Landmark & Nearest Transit Stop")
+    col1, col2, col3, col4 = st.columns([2, 3, 1, 2])
+    with col1:
+        st.markdown("**Landmark**")
+        st.info(selected_landmark)
+    with col2:
+        st.markdown("**Nearest Stop**")
+        st.info(closest_stop[3])
+    with col3:
         walking_time = helpers.calculate_walking_time(closest_stop[5])
-        st.write("**Transit Stop Details:**")
-        st.write(f"- **Stop Name:** {closest_stop[3]}")
-        st.write(f"- **Stop Type:** {closest_stop[4]}")
-        st.write(f"- **Routes:** {closest_stop[6]}")
-        st.write(f"- **Fare:** {fare}")
-        st.write(f"- **Stop ID:** {closest_stop[0]}")
-        st.write(f"- **Coordinates:** {closest_stop[1]:.6f}, {closest_stop[2]:.6f}")
-        st.write(f"- **Walking Distance:** {closest_stop[5]:.4f} miles ({closest_stop[5] * 1.60934:.4f} km)")
-        st.write(f"- **Estimated Walking Time:** {walking_time}")
+        st.markdown("**Walking Time**")
+        st.info(walking_time)
+    with col4:
+        st.markdown("**Stop Type**")
+        st.info(closest_stop[4])
+
+    st.subheader("🗺️ Location Map")
+    map_obj = helpers.create_transit_map(
+        landmark_info['latitude'], landmark_info['longitude'],
+        landmark_info['landmark_name'],
+        closest_stop[1], closest_stop[2], closest_stop[3],
+        closest_stop[4], closest_stop[6]
+    )
+    st_folium(map_obj, width=1400, height=600)
+
+    with st.expander("ℹ️ Detailed Information"):
+        col_a, col_b = st.columns(2)
+        with col_a:
+            st.write("**Landmark Details:**")
+            st.write(f"- **Name:** {landmark_info['landmark_name']}")
+            if 'address' in landmark_info and pd.notna(landmark_info['address']):
+                st.write(f"- **Address:** {landmark_info['address']}")
+            st.write(f"- **Coordinates:** {landmark_info['latitude']:.6f}, {landmark_info['longitude']:.6f}")
+        with col_b:
+            fare = helpers.get_fare_info(closest_stop[4])
+            st.write("**Transit Stop Details:**")
+            st.write(f"- **Stop Name:** {closest_stop[3]}")
+            st.write(f"- **Stop Type:** {closest_stop[4]}")
+            st.write(f"- **Routes:** {closest_stop[6]}")
+            st.write(f"- **Fare:** {fare}")
+            st.write(f"- **Walking Distance:** {closest_stop[5]:.4f} miles")
+            st.write(f"- **Estimated Walking Time:** {walking_time}")
+
+else:
+    st.sidebar.header("Cluster Settings")
+    st.sidebar.markdown("Adjust how landmarks are grouped into walkable neighborhoods.")
+    
+    eps_miles = st.sidebar.slider(
+        "Max walking distance between landmarks (miles)",
+        min_value=0.1, max_value=2.0, value=0.5, step=0.1
+    )
+    min_samples = st.sidebar.slider(
+        "Minimum landmarks per cluster",
+        min_value=2, max_value=10, value=3, step=1
+    )
+    
+    clustered_df = helpers.cluster_landmarks(landmark_df, eps_miles=eps_miles, min_samples=min_samples)
+    
+    n_clusters = len(set(clustered_df['cluster'])) - (1 if -1 in clustered_df['cluster'].values else 0)
+    n_noise = (clustered_df['cluster'] == -1).sum()
+    n_clustered = (clustered_df['cluster'] != -1).sum()
+    
+    st.subheader("🏘️ Walkable Landmark Neighborhoods")
+    st.markdown(
+        "Landmarks are grouped using **DBSCAN clustering** with haversine distance. "
+        "Each color represents a walkable cluster of attractions. Gray markers are isolated landmarks."
+    )
+    
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        st.metric("Neighborhoods Found", n_clusters)
+    with col2:
+        st.metric("Landmarks in Clusters", n_clustered)
+    with col3:
+        st.metric("Isolated Landmarks", n_noise)
+    
+    st.subheader("🗺️ Cluster Map")
+    cluster_map = helpers.create_cluster_map(clustered_df)
+    st_folium(cluster_map, width=1400, height=600)
+    
+    with st.expander("📋 Browse Clusters"):
+        for cluster_id in sorted(clustered_df['cluster'].unique()):
+            if cluster_id == -1:
+                continue
+            cluster_landmarks_df = clustered_df[clustered_df['cluster'] == cluster_id]
+            st.markdown(f"**Cluster {cluster_id}** ({len(cluster_landmarks_df)} landmarks)")
+            for name in cluster_landmarks_df['landmark_name'].tolist():
+                st.write(f"- {name}")
 
 # Information about transit types
 st.sidebar.markdown("---")

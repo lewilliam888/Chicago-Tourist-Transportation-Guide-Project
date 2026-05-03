@@ -256,3 +256,55 @@ def get_fare_info(stop_type):
         "Bus Stop": "$2.25"
     }
     return fares.get(stop_type, "$2.50")
+
+from sklearn.cluster import DBSCAN
+import numpy as np
+
+@st.cache_data
+def cluster_landmarks(landmark_df, eps_miles=0.5, min_samples=3):
+    coords = landmark_df[['latitude', 'longitude']].to_numpy()
+    coords_rad = np.radians(coords)
+    eps_rad = eps_miles / 3958.8
+    
+    db = DBSCAN(eps=eps_rad, min_samples=min_samples, metric='haversine')
+    labels = db.fit_predict(coords_rad)
+    
+    result = landmark_df.copy()
+    result['cluster'] = labels
+    return result
+
+
+def get_cluster_color(cluster_id):
+    if cluster_id == -1:
+        return 'gray'
+    colors = [
+        'red', 'blue', 'green', 'purple', 'orange',
+        'darkred', 'darkblue', 'darkgreen', 'cadetblue',
+        'darkpurple', 'pink', 'lightred', 'beige',
+        'lightblue', 'lightgreen', 'black'
+    ]
+    return colors[cluster_id % len(colors)]
+
+
+def create_cluster_map(clustered_df):
+    center_lat = clustered_df['latitude'].mean()
+    center_lon = clustered_df['longitude'].mean()
+    
+    m = folium.Map(location=[center_lat, center_lon], zoom_start=12)
+    
+    for _, row in clustered_df.iterrows():
+        color = get_cluster_color(row['cluster'])
+        cluster_label = f"Cluster {row['cluster']}" if row['cluster'] != -1 else "Isolated"
+        
+        folium.CircleMarker(
+            location=[row['latitude'], row['longitude']],
+            radius=6,
+            popup=f"<b>{row['landmark_name']}</b><br>{cluster_label}",
+            tooltip=row['landmark_name'],
+            color=color,
+            fill=True,
+            fill_color=color,
+            fill_opacity=0.7
+        ).add_to(m)
+    
+    return m
