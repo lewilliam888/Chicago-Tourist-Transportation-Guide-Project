@@ -388,6 +388,9 @@ OVERPASS_QUERY = f"""
   nwr["tourism"~"^(museum|gallery|zoo|aquarium|theme_park)$"]["name"]({CHICAGO_BBOX});
   nwr["tourism"~"^(attraction|viewpoint|artwork)$"]["name"]["wikipedia"]({CHICAGO_BBOX});
   nwr["leisure"="park"]["name"]["wikipedia"]({CHICAGO_BBOX});
+  nwr["amenity"="planetarium"]["name"]({CHICAGO_BBOX});
+  nwr["leisure"="stadium"]["name"]["wikipedia"]({CHICAGO_BBOX});
+  nwr["man_made"="tower"]["name"]["wikipedia"]({CHICAGO_BBOX});
 );
 out center tags;
 """
@@ -404,11 +407,13 @@ OSM_CATEGORY_LABELS = [
 
 def _osm_category(tags):
     tourism = tags.get("tourism", "")
-    if tourism in ("museum", "gallery"):
+    if tourism in ("museum", "gallery") or tags.get("amenity") == "planetarium":
         return "Museums & Galleries"
     if tourism in ("zoo", "aquarium", "theme_park"):
         return "Zoos & Family"
     if tourism in ("attraction", "viewpoint", "artwork"):
+        return "Iconic Attractions"
+    if tags.get("leisure") == "stadium" or tags.get("man_made") == "tower":
         return "Iconic Attractions"
     if tags.get("leisure") == "park":
         return "Parks & Outdoors"
