@@ -25,6 +25,7 @@ with st.spinner("Loading Chicago landmarks and transit data..."):
     bus_df = helpers.load_bus_stops(bus_url)
     landmark_df = helpers.load_landmarks(landmark_url)
     transit_df = helpers.combine_transit_stops(train_df, bus_df)
+    ridership_profile, ridership_source = helpers.load_ridership_profile()
 
 transit_df = transit_df.rename(columns={'latitude': 'lat', 'longitude': 'lon'})
 transit_df = transit_df.reset_index(drop=True)
@@ -63,6 +64,16 @@ if app_mode == "Find Nearest Transit":
         index=0
     )
 
+    st.sidebar.markdown("---")
+    st.sidebar.subheader("Visit Day")
+    import datetime
+    today_dow = (datetime.date.today().weekday() + 1) % 7  # convert Mon=0 to Sun=0
+    visit_day = st.sidebar.selectbox(
+        "Planning to visit on:",
+        helpers.DAY_NAMES,
+        index=today_dow
+    )
+
     landmark_info = landmark_df[landmark_df['landmark_name'] == selected_landmark].iloc[0]
     landmark_latlon = (landmark_info['latitude'], landmark_info['longitude'])
 
@@ -95,6 +106,34 @@ if app_mode == "Find Nearest Transit":
     with col4:
         st.markdown("**Stop Type**")
         st.info(closest_stop[4])
+
+    # NEW FEATURE: expected crowds at the nearest L station
+    if closest_stop[4] == 'L Train Station':
+        busyness = helpers.get_busyness(
+            closest_stop[7], helpers.DAY_NAMES.index(visit_day), ridership_profile
+        )
+        if busyness is not None:
+            st.subheader("👥 Expected Crowds")
+            tier_emoji = {"Quiet": "🟢", "Moderate": "🟡", "Busy": "🔴"}
+            bcol1, bcol2, bcol3 = st.columns(3)
+            with bcol1:
+                st.metric(
+                    f"{visit_day} at this station",
+                    f"{tier_emoji.get(busyness['tier'], '')} {busyness['tier']}"
+                )
+            with bcol2:
+                st.metric("Expected entries", f"{busyness['expected_rides']:,.0f} riders/day")
+            with bcol3:
+                st.metric("Vs. typical day here", f"{busyness['pct_vs_typical']:+.0f}%")
+            st.caption(
+                f"Source: CTA daily station entries, 2022-present ({ridership_source}). "
+                "Tiers compare this day against the station's own weekly pattern. "
+                "Estimates are per day, not per hour."
+            )
+        elif ridership_profile is not None:
+            st.caption("👥 No ridership history available for this station.")
+    else:
+        st.caption("👥 Crowd estimates are available for L stations only. CTA publishes ridership per bus route, not per stop.")
 
     st.subheader("🗺️ Location Map")
     map_obj = helpers.create_transit_map(
@@ -187,5 +226,5 @@ st.sidebar.write(f"Total Transit Stops: {len(transit_df)}")
 
 # Footer
 st.markdown("---")
-st.markdown("*Data sources: City of Chicago Data Portal - CTA L Stops, CTA Bus Stops, and Individual Landmarks*")
+st.markdown("*Data sources: City of Chicago Data Portal - CTA L Stops, CTA Bus Stops, CTA Daily Station Entries, and Individual Landmarks*")
 st.markdown("*Map powered by Folium and OpenStreetMap*")

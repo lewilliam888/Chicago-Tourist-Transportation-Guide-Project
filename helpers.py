@@ -52,12 +52,14 @@ def load_l_stops(url):
 
     df['routes'] = line_colors
 
-    df = df[['stop_id', 'stop_name', 'latitude', 'longitude', 'routes']] 
-    df = df.dropna()
+    # map_id is the parent station ID -- it is what the CTA ridership
+    # dataset keys on, so keep it for the busyness lookup
+    df = df[['stop_id', 'map_id', 'stop_name', 'latitude', 'longitude', 'routes']]
+    df = df.dropna(subset=['stop_id', 'stop_name', 'latitude', 'longitude'])
     df = df.drop_duplicates(['stop_id'])
-    df['stop_type'] = 'L Train Station' 
-    
-    return df 
+    df['stop_type'] = 'L Train Station'
+
+    return df
 
 @st.cache_data
 # Define the function to load bus stops from a given URL
@@ -193,6 +195,7 @@ def get_closest_stop(landmark_latlon, df):
     chosen_stop.append(closest['stop_type'])
     chosen_stop.append(closest['distance'])
     chosen_stop.append(closest.get('routes', 'Unknown'))
+    chosen_stop.append(closest.get('map_id'))  # parent station ID (L stations only; NaN for bus stops)
 
     return chosen_stop  # Return the chosen stop
 
@@ -289,13 +292,13 @@ def get_cluster_color(cluster_id):
 def create_cluster_map(clustered_df):
     center_lat = clustered_df['latitude'].mean()
     center_lon = clustered_df['longitude'].mean()
-    
+
     m = folium.Map(location=[center_lat, center_lon], zoom_start=12)
-    
+
     for _, row in clustered_df.iterrows():
         color = get_cluster_color(row['cluster'])
         cluster_label = f"Cluster {row['cluster']}" if row['cluster'] != -1 else "Isolated"
-        
+
         folium.CircleMarker(
             location=[row['latitude'], row['longitude']],
             radius=6,
@@ -306,5 +309,99 @@ def create_cluster_map(clustered_df):
             fill_color=color,
             fill_opacity=0.7
         ).add_to(m)
-    
+
     return m
+
+
+# NEW FEATURE: Expected crowds at L stations
+import os
+import io
+import datetime
+
+RIDERSHIP_AGG_URL = (
+    "https://data.cityofchicago.org/resource/5neh-572f.csv"
+    "?$select=station_id,date_extract_dow(date),avg(rides)"
+    "&$where=date>'2022-01-01'"
+    "&$group=station_id,date_extract_dow(date)"
+    "&$limit=1200"
+)
+
+DAY_NAMES = ["Sunday", "Monday", "Tuesday", "Wednesday",
+             "Thursday", "Friday", "Saturday"]  # index = Socrata dow
+
+
+def _add_tiers(df):
+    """Label each station-day Quiet/Moderate/Busy relative to that station's own week.
+
+    Ranking within the station matters: 3,000 entries is a busy day at a
+    small station and a dead day at Lake/State, so an absolute threshold
+    would mislabel both.
+    """
+    pct = df.groupby('station_id')['expected_rides'].rank(pct=True)
+    df['tier'] = pd.cut(
+        pct, bins=[0, 1/3, 2/3, 1],
+        labels=['Quiet', 'Moderate', 'Busy'],
+        include_lowest=True
+    ).astype(str)
+    return df
+
+
+@st.cache_data
+def load_ridership_profile():
+    """Return (profile_df, source_label) for expected daily entries per L station.
+
+    profile_df columns: station_id (str, joins to map_id in the L stops data),
+    dow (0=Sunday..6=Saturday), expected_rides, tier.
+    Returns (None, None) if neither the lookup file nor the API is available.
+    """
+    lookup_path = os.path.join(os.path.dirname(__file__), 'data', 'ridership_lookup.csv')
+    if os.path.exists(lookup_path):
+        df = pd.read_csv(lookup_path, dtype={'station_id': str})
+        df = df.rename(columns={'pred_rides': 'expected_rides'})
+        # The notebook exports one row per station x dow x month;
+        # keep the current month's predictions
+        if 'month' in df.columns:
+            df = df[df['month'] == datetime.date.today().month].drop(columns='month')
+        source = 'model prediction'
+    else:
+        try:
+            req = urllib.request.Request(RIDERSHIP_AGG_URL)
+            req.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36')
+            with urllib.request.urlopen(req) as resp:
+                text = resp.read().decode()
+            df = pd.read_csv(io.StringIO(text), dtype={'station_id': str})
+        except Exception:
+            return None, None
+        df = df.rename(columns={'date_extract_dow_date': 'dow', 'avg_rides': 'expected_rides'})
+        source = 'historical average since 2022'
+
+    df['dow'] = df['dow'].astype(int)
+    df['expected_rides'] = df['expected_rides'].astype(float)
+    if 'tier' not in df.columns:
+        df = _add_tiers(df)
+
+    return df, source
+
+
+def get_busyness(map_id, dow, profile_df):
+    """Busyness info for one L station on one day of week.
+
+    Returns a dict with tier, expected_rides, and pct_vs_typical (percent
+    difference from that station's average day), or None if the station
+    isn't in the ridership data (e.g. bus stops, or new stations).
+    """
+    if profile_df is None or map_id is None or pd.isna(map_id):
+        return None
+    station = profile_df[profile_df['station_id'] == str(map_id)]
+    if len(station) == 0:
+        return None
+    day_rows = station[station['dow'] == dow]
+    if len(day_rows) == 0:
+        return None
+    row = day_rows.iloc[0]
+    typical = station['expected_rides'].mean()
+    return {
+        'tier': row['tier'],
+        'expected_rides': row['expected_rides'],
+        'pct_vs_typical': (row['expected_rides'] - typical) / typical * 100,
+    }

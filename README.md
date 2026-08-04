@@ -1,57 +1,68 @@
 # Chicago Tourist Transportation Guide
 
-An interactive Streamlit app for exploring Chicago's 317 historic landmarks alongside the CTA transit network. Two modes: find the nearest transit stop to any landmark, or use DBSCAN clustering to identify walkable neighborhoods of nearby attractions.
+Streamlit app for exploring Chicago's 317 historic landmarks through the CTA network. Pick a landmark and it finds the nearest transit stop, estimates how crowded that station will be on the day of your visit, and can group landmarks into walkable clusters.
 
-**Live demo:** https://chicago-tourist-transportation-guide.streamlit.app/
+**Live demo:** <https://chicago-tourist-transportation-guide.streamlit.app/>
 
-## What it does
+## Features
 
-The app pulls real-time data from three City of Chicago Open Data endpoints — 302 L train stations, 10,760+ bus stops, and 317 designated landmarks — and lets users interact with it in two ways.
+Data comes from four City of Chicago Open Data endpoints: 302 L stations, 10,760+ bus stops, 317 designated landmarks, and daily station entry counts.
 
-The **nearest transit** mode takes a selected landmark, calculates geodesic distance to every transit stop, and returns the closest one along with walking time, fare, and a folium map showing both points connected by a line.
+**Nearest transit.** Computes geodesic distance from the selected landmark to every stop and returns the closest, with walking time, fare, and a folium map connecting the two points.
 
-The **walkable neighborhoods** mode runs DBSCAN clustering on landmark coordinates to surface natural groupings of attractions within walking distance of each other. Users can tune the maximum walking distance (`eps`) and minimum cluster size (`min_samples`) with sliders to see how the cluster structure changes.
+**Expected crowds.** Predicts how busy the nearest L station will be on your planned visit day using CTA ridership history. Details below.
+
+**Walkable neighborhoods.** DBSCAN clustering over landmark coordinates. Sliders control max walking distance (`eps`) and minimum cluster size.
+
+## Busyness prediction
+
+Built on the [CTA daily station entries dataset](https://data.cityofchicago.org/Transportation/CTA-Ridership-L-Station-Entries-Daily-Totals/5neh-572f), filtered to 2022 onward since ridership patterns changed permanently during the pandemic. The ridership data keys on `map_id` (parent station), which joins against the L stops dataset.
+
+By default the app fetches each station's average entries per day of week in one aggregated Socrata query, then labels each day Quiet, Moderate, or Busy by ranking it within that station's own week. Tiers are station-relative on purpose: 3,000 daily entries would be a record day at a small station and a slow one at Lake/State.
+
+For better estimates, `notebooks/ridership_model.ipynb` trains a `HistGradientBoostingRegressor` on station, day of week, month, week of year, and a federal holiday flag. Train is 2022 to 2024, test is 2025 onward, and the model is scored against a per-station day-of-week mean baseline on MAE and MAPE. The notebook exports `data/ridership_lookup.csv` with per-month predictions, and the app uses that file automatically when it exists.
+
+The data is daily totals, so the app predicts which days are busy rather than which hours. A "Busy" Saturday downtown can still be empty at 8am. Bus stops get no estimate because CTA publishes bus ridership per route, not per stop.
 
 ## Why DBSCAN
 
-DBSCAN was chosen over K-Means because the goal is to find *natural* clusters of nearby landmarks without specifying how many should exist. K-Means would force every landmark into a cluster and require choosing `k` upfront; DBSCAN identifies dense regions and treats isolated landmarks as noise (label `-1`), which is closer to how someone would actually plan a walking tour.
+The goal is to find natural groupings without deciding in advance how many exist. K-Means forces every landmark into a cluster and needs `k` upfront. DBSCAN finds dense regions and marks isolated landmarks as noise, which is closer to how someone plans a walking tour.
 
-The clustering uses **haversine distance** rather than Euclidean. Euclidean distance on raw lat/lon coordinates distorts at any latitude away from the equator — at Chicago's latitude (~41.9°N), one degree of longitude is roughly 0.74× the distance of one degree of latitude, so a Euclidean clusterer would treat east-west neighbors as artificially closer than north-south ones. Haversine handles this correctly by treating coordinates as points on a sphere.
-
-The `eps` parameter is exposed in miles for usability and converted to radians internally (`eps_miles / 3958.8`, where 3958.8 is Earth's radius in miles) since scikit-learn's haversine implementation expects radians.
+Clustering uses haversine rather than Euclidean distance. At Chicago's latitude a degree of longitude covers about 0.74 times the ground distance of a degree of latitude, so Euclidean distance on raw coordinates would treat east-west neighbors as closer than they are. The `eps` slider takes miles and converts to radians internally (`eps_miles / 3958.8`) because scikit-learn's haversine metric expects radians.
 
 ## Stack
 
-- Streamlit for the UI and deployment
-- scikit-learn for DBSCAN
-- pandas + numpy for data handling
-- folium + streamlit-folium for the maps
-- geopy for geodesic distance calculations
-- Data from the [City of Chicago Open Data Portal](https://data.cityofchicago.org/) via the Socrata API
+Streamlit, pandas, numpy, scikit-learn, folium + streamlit-folium, geopy, matplotlib (notebook only). All data pulled live from the Socrata API.
 
 ## Repo layout
 
 ```
 .
-├── app.py            # Streamlit UI, mode toggle, layout
-├── helpers.py        # API loaders, distance calcs, DBSCAN, map builders
+├── app.py                          # Streamlit UI
+├── helpers.py                      # loaders, distance calcs, DBSCAN, busyness
+├── notebooks/
+│   └── ridership_model.ipynb       # ridership model, exports the lookup
+├── data/
+│   └── ridership_lookup.csv        # model predictions (created by the notebook)
 ├── requirements.txt
 └── README.md
 ```
 
 ## Running locally
 
-```bash
+```
 git clone https://github.com/lewilliam888/Chicago-Tourist-Transportation-Guide-Project.git
 cd Chicago-Tourist-Transportation-Guide-Project
 pip install -r requirements.txt
 streamlit run app.py
 ```
 
-The first load takes a few seconds while the three datasets are fetched and cached.
+First load takes a few seconds while the datasets download and cache. To regenerate the model lookup, run the notebook top to bottom. The first run downloads about 200k rows, cached locally after that.
 
-## Notes & limitations
+## Limitations
 
-The "Individual Landmarks" dataset is Chicago's official historic preservation list — it includes architecturally significant buildings like the Manhattan Building and Union Station, but not modern tourist attractions like Millennium Park or Navy Pier. The app is most useful for architecture-focused exploration.
+The landmarks dataset is Chicago's official historic preservation list. It has the Manhattan Building and Union Station but not Millennium Park or Navy Pier, so the app suits architecture-focused exploration best.
 
-Walking time estimates assume a 3 mph pace and don't account for elevation, intersections, or the actual pedestrian network.
+Walking times assume a 3 mph pace on straight-line distance, ignoring the actual street network.
+
+Busyness estimates reflect daily turnstile entries, not real-time crowding, and cover L stations only.
