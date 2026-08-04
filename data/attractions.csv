@@ -1,5 +1,6 @@
 name,category,latitude,longitude,wiki_title,monthly_views
 WSBC-AM (Chicago),Iconic Attractions,41.9385895,-87.7512443,,
+Independence Square Fountain,Iconic Attractions,41.8627134,-87.7194656,,
 Kwa-Ma-Rolas (Kwanusila),Iconic Attractions,41.9489802,-87.6424356,Kwanusila,129.6153846153846
 A Signal of Peace,Iconic Attractions,41.9331913,-87.6314027,,
 Big Beaver Totem Pole,Iconic Attractions,41.8672178,-87.6170698,Big Beaver Totem Pole,72.07692307692308
@@ -9,11 +10,14 @@ Menorah,Iconic Attractions,41.9974053,-87.7034188,,
 Young Lincoln Statue,Iconic Attractions,41.9897817,-87.6694363,,
 360 Chicago,Iconic Attractions,41.8989798,-87.6231763,John Hancock Center,7443.076923076923
 Lincoln Memorial Replica,Iconic Attractions,41.9758778,-87.9042536,,
+SkyDeck Chicago Willis Tower,Iconic Attractions,41.8785046,-87.6358868,Willis Tower,46962.153846153844
 Money Museum,Museums & Galleries,41.87833,-87.632568,Federal Reserve Bank of Chicago,1475.076923076923
 America's Courtyard,Iconic Attractions,41.8656406,-87.6065703,America's Courtyard,469.6923076923077
 Man with Fish,Iconic Attractions,41.8671371,-87.6146694,Man with Fish,119.38461538461539
 Olmec Head,Iconic Attractions,41.8671514,-87.6157214,,
 Sir Georg Solti Bust,Iconic Attractions,41.8778676,-87.6236335,Bust of Georg Solti,33.53846153846154
+Flying Dragon,Iconic Attractions,41.8802887,-87.6237026,Flying Dragon (Calder),126.6923076923077
+Large Interior Form,Iconic Attractions,41.8805829,-87.6239544,"Large Interior Form, 1953–54",113.6923076923077
 The Alarm,Iconic Attractions,41.9362619,-87.6325293,The Alarm (Boyle),47.53846153846154
 Cow,Iconic Attractions,41.8833571,-87.6248187,,
 McCormick Bridgehouse & Chicago River Museum,Museums & Galleries,41.8884954,-87.6246857,DuSable Bridge,689.0
@@ -31,6 +35,7 @@ American Writers Museum,Museums & Galleries,41.8855608,-87.6249909,,
 Begin Route 66,Iconic Attractions,41.8796145,-87.6246298,,
 Chicago Architecture Center,Museums & Galleries,41.8880131,-87.6236228,Chicago Architecture Center,265.0769230769231
 San Marco II,Iconic Attractions,41.875953,-87.6327146,San Marco II,32.69230769230769
+Shit Fountain,Iconic Attractions,41.8997155,-87.6746269,,
 Michael Jordan,Iconic Attractions,41.8807048,-87.6730825,Statue of Michael Jordan,1055.5384615384614
 Jack Brickhouse,Iconic Attractions,41.8898888,-87.6238655,Bust of Jack Brickhouse,50.23076923076923
 Cubi VII,Iconic Attractions,41.880484,-87.6238031,Cubi VII,39.0
@@ -55,6 +60,7 @@ Giant Radio Flyer Wagon,Iconic Attractions,41.9231365,-87.7883472,,
 Pritzker Military Museum & Library,Museums & Galleries,41.8806197,-87.6246632,,
 Maxwell Street Vendor,Iconic Attractions,41.8648485,-87.6460057,Maxwell Street,1758.2307692307693
 Statue of Liberty,Iconic Attractions,42.0185804,-87.8876216,,
+Nesewin - How to Breathe Underwater,Iconic Attractions,41.9542355,-87.7967514,,
 Chicago Picasso Braille Model,Iconic Attractions,41.8833774,-87.629829,Chicago Picasso,5621.615384615385
 Museum of Broadcast Communications,Museums & Galleries,41.8846038,-87.6393207,,
 Wicker Park,Parks & Outdoors,41.9080017,-87.6761743,Wicker Park (Chicago park),106.38461538461539
@@ -186,6 +192,7 @@ Olympia Centre,Iconic Attractions,41.8962391,-87.6234942,Olympia Centre,278.7692
 Irish American Heritage Center,Museums & Galleries,41.9653234,-87.7445686,,
 Balzekas Museum of Lithuanian Culture,Museums & Galleries,41.7746301,-87.7229824,Balzekas Museum of Lithuanian Culture,99.61538461538461
 Illinois Centennial Monument,Iconic Attractions,41.9283908,-87.7073273,Illinois Centennial Monument,259.9230769230769
+Jacques Marquette Monument,Iconic Attractions,41.8478117,-87.6990148,,
 Time-Life Building,Iconic Attractions,41.8922134,-87.6197043,541 North Fairbanks Court,168.69230769230768
 River East Center,Iconic Attractions,41.8914329,-87.6181949,River East Center,96.15384615384616
 North Pier Tower,Iconic Attractions,41.8908347,-87.6147718,North Pier Apartments,59.46153846153846
@@ -200,6 +207,7 @@ United Center,Iconic Attractions,41.880679,-87.6741835,United Center,16792.61538
 Portage Park,Parks & Outdoors,41.955066,-87.7645945,Portage Park (Chicago park),101.38461538461539
 Ukrainian Institute of Modern Art,Museums & Galleries,41.8959798,-87.6851652,,
 Alexander Von Humboldt Monument,Iconic Attractions,41.9054797,-87.7014749,Statue of Alexander von Humboldt (Chicago),71.15384615384616
+Fritz Reuter Monument,Iconic Attractions,41.903823,-87.7019631,,
 Leif Ericsson Monument,Iconic Attractions,41.9067221,-87.7015621,Statue of Leif Erikson (Chicago),74.92307692307692
 Swedish American Museum,Museums & Galleries,41.9766738,-87.668062,Swedish American Museum,143.69230769230768
 Leather Archives and Museum,Museums & Galleries,41.9986421,-87.6683357,Leather Archives & Museum,990.9230769230769
@@ -249,6 +257,7 @@ Statue of the Republic,Iconic Attractions,41.7796062,-87.5799028,Statue of The R
 Benjamin Franklin,Iconic Attractions,41.9138025,-87.6310959,Statue of Benjamin Franklin (Chicago),39.15384615384615
 Graue Mill (name=Graue Mill & Museum),Museums & Galleries,41.8205839,-87.9274892,Graue Mill,215.69230769230768
 151 North Franklin,Iconic Attractions,41.8848307,-87.6348931,151 North Franklin,307.0769230769231
+Centennial Wheel,Iconic Attractions,41.8917017,-87.607475,,
 John Alexander Logan Monument,Iconic Attractions,41.8706199,-87.6234634,General John Logan Memorial,293.3076923076923
 Man Enters The Cosmos,Iconic Attractions,41.8667661,-87.6071237,Man Enters the Cosmos,588.6153846153846
 Park No. 474,Parks & Outdoors,41.8355094,-87.6275114,Park No. 474,169.07692307692307
@@ -264,12 +273,14 @@ Hawthorne Race Course,Iconic Attractions,41.8265275,-87.7485702,Hawthorne Race C
 Marquette and Joliet Explorer Statue,Iconic Attractions,41.8053075,-87.8030562,Chicago Portage National Historic Site,192.76923076923077
 Howard Brown Health - Halsted,Iconic Attractions,41.945827,-87.6491513,,
 400 Lake Shore - North Tower,Iconic Attractions,41.8898749,-87.6148778,400 Lake Shore,2340.0
+Nine Dragon Wall,Iconic Attractions,41.8530636,-87.6314266,,
 Robert Cavalier de LaSalle,Iconic Attractions,41.9133732,-87.6327487,Statue of Robert Cavelier de La Salle,54.23076923076923
 Richard Oglesby Monument,Iconic Attractions,41.9301485,-87.6370807,Statue of Richard J. Oglesby,47.07692307692308
 Alexander Hamilton Monument,Iconic Attractions,41.9317129,-87.6384365,Statue of Alexander Hamilton (Chicago),256.3076923076923
 John Peter Altgeld Momument,Iconic Attractions,41.9321937,-87.6375298,,
 Obama Presidential Center Museum,Museums & Galleries,41.7862624,-87.5858794,Barack Obama Presidential Center,54880.46153846154
 South Shore Cultural Center,Parks & Outdoors,41.7698051,-87.5629577,South Shore Cultural Center,505.6923076923077
+Washington (George Washington Monument),Iconic Attractions,41.8024739,-87.6164217,,
 The Art Institute of Chicago,Museums & Galleries,41.8795594,-87.6225683,Art Institute of Chicago,9902.0
 Glessner House Museum,Museums & Galleries,41.8577219,-87.6212227,John J. Glessner House,679.6153846153846
 Institute for the Study of Ancient Cultures Museum,Museums & Galleries,41.7892146,-87.5974892,Institute for the Study of Ancient Cultures,1237.6923076923076
@@ -280,6 +291,7 @@ Field (Eugene) Park,Parks & Outdoors,41.9747639,-87.7232853,Eugene Field Park,77
 Sauganash Trail,Parks & Outdoors,41.9899796,-87.7378542,,
 Indian Boundary Park,Parks & Outdoors,42.0094793,-87.6932432,Indian Boundary Park,176.46153846153845
 Lincoln Park Zoo,Zoos & Family,41.9203762,-87.6335049,Lincoln Park Zoo,2172.846153846154
+World's Fair Bison,Iconic Attractions,41.9038215,-87.7024971,,
 Wilder Park Conservatory,Museums & Galleries,41.8949188,-87.9436548,,
 Agora,Iconic Attractions,41.8682801,-87.6235711,Agora (sculpture),800.3076923076923
 Lincoln (Abraham) Park,Parks & Outdoors,41.9410389,-87.6330124,Lincoln Park,2206.4615384615386

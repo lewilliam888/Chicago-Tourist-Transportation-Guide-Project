@@ -387,6 +387,7 @@ OVERPASS_QUERY = f"""
 (
   nwr["tourism"~"^(museum|gallery|zoo|aquarium|theme_park)$"]["name"]({CHICAGO_BBOX});
   nwr["tourism"~"^(attraction|viewpoint|artwork)$"]["name"]["wikipedia"]({CHICAGO_BBOX});
+  nwr["tourism"~"^(attraction|viewpoint|artwork)$"]["name"]["wikidata"]({CHICAGO_BBOX});
   nwr["leisure"="park"]["name"]["wikipedia"]({CHICAGO_BBOX});
   nwr["amenity"="planetarium"]["name"]({CHICAGO_BBOX});
   nwr["leisure"="stadium"]["name"]["wikipedia"]({CHICAGO_BBOX});
