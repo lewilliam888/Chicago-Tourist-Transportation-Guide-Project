@@ -69,12 +69,14 @@ Field Museum (Field Museum of Natural History),Museums & Galleries,41.8662111,-8
 Adler Planetarium,Museums & Galleries,41.8663624,-87.6066267,Adler Planetarium,1904.0
 Griffin Museum of Science and Industry,Museums & Galleries,41.7907605,-87.5829373,Museum of Science and Industry (Chicago),6708.923076923077
 Leaning Tower of Niles,Iconic Attractions,42.0124193,-87.7840559,Leaning Tower of Niles,1532.1538461538462
+Old Chicago Post Office,Iconic Attractions,41.8755893,-87.6386731,Old Chicago Main Post Office,1667.1538461538462
 Frank Lloyd Wright Home and Studio,Museums & Galleries,41.8940833,-87.7996691,Frank Lloyd Wright Home and Studio,2560.153846153846
 Jefferson Memorial Park,Parks & Outdoors,41.9686493,-87.7636662,Jefferson Park (Chicago park),53.84615384615385
 Welles Park,Parks & Outdoors,41.9622584,-87.6862728,Welles Park,94.23076923076923
 Independence Park,Parks & Outdoors,41.9527662,-87.7238933,Independence Park (Chicago),59.46153846153846
 Oz Park,Parks & Outdoors,41.9206037,-87.6456648,Oz Park,458.0
 Riis Park,Parks & Outdoors,41.9255928,-87.7818434,Riis Park (Chicago),90.46153846153847
+Chicago Board of Trade Building,Iconic Attractions,41.8775057,-87.631783,Chicago Board of Trade Building,2664.923076923077
 Seward Park,Parks & Outdoors,41.902452,-87.6387978,Seward Park (Chicago),68.38461538461539
 Byline Bank Aragon Ballroom,Iconic Attractions,41.9694311,-87.6580259,Aragon Ballroom (Chicago),2144.4615384615386
 Cornell Square Park,Parks & Outdoors,41.8021751,-87.6708937,Cornell Square,31.692307692307693
@@ -84,37 +86,110 @@ DuSable Black History Museum and Education Center,Museums & Galleries,41.7918722
 Allstate Arena,Iconic Attractions,42.0052766,-87.8877722,Allstate Arena,7758.2307692307695
 Marquette Park,Parks & Outdoors,41.7680333,-87.7029016,Marquette Park (Chicago),517.0769230769231
 McKinley Park,Parks & Outdoors,41.8249048,-87.6796791,McKinley Park (Chicago park),62.38461538461539
+Aon Center,Iconic Attractions,41.8852816,-87.6215479,Aon Center (Chicago),6188.538461538462
+Two Prudential Plaza,Iconic Attractions,41.885418,-87.6227198,Two Prudential Plaza,1157.2307692307693
+Kemper Building,Iconic Attractions,41.8865268,-87.6274295,Kemper Building (Chicago),132.07692307692307
+77 West Wacker (77 West Wacker Drive),Iconic Attractions,41.8865179,-87.6305507,77 West Wacker Drive,1012.0
+Kluczynski Federal Building,Iconic Attractions,41.8784548,-87.6298984,Kluczynski Federal Building,1011.0
+Trump International Hotel & Tower Chicago,Iconic Attractions,41.8888728,-87.6264574,Trump International Hotel and Tower (Chicago),13118.76923076923
+330 North Wabash,Iconic Attractions,41.8886549,-87.6275952,330 North Wabash,466.84615384615387
+111 South Wacker,Iconic Attractions,41.8802904,-87.6363171,111 South Wacker Drive,328.38461538461536
+200 South Wacker,Iconic Attractions,41.879035,-87.6373829,200 South Wacker Drive,152.46153846153845
+Wintrust Financial Corparation,Iconic Attractions,41.8784864,-87.631521,,
+South La Salle Street Building,Iconic Attractions,41.8790776,-87.6330219,Continental and Commercial National Bank,124.07692307692308
+Richard J. Daley Center,Iconic Attractions,41.8840956,-87.630206,Richard J. Daley Center,1544.076923076923
+Three First National Plaza,Iconic Attractions,41.8823339,-87.6298542,Three First National Plaza,209.07692307692307
+One North LaSalle (One LaSalle Street Building),Iconic Attractions,41.8823196,-87.6320267,One North LaSalle,250.69230769230768
 SeatGeek Stadium,Iconic Attractions,41.7648138,-87.806137,SeatGeek Stadium,4261.615384615385
+Old Colony Building,Iconic Attractions,41.8766162,-87.6289952,The Arc at Old Colony,154.76923076923077
+Monadnock Building,Iconic Attractions,41.8775389,-87.6295497,Monadnock Building,3599.3076923076924
+Fisher Building,Iconic Attractions,41.8772056,-87.6290032,Fisher Building (Chicago),510.38461538461536
+Dirksen Federal Building and US Courthouse,Iconic Attractions,41.8788181,-87.628962,Everett McKinley Dirksen United States Courthouse,902.6923076923077
+The Rookery,Iconic Attractions,41.8790827,-87.6318314,Rookery Building,2169.769230769231
+John Marshall Law School (Building 682),Iconic Attractions,41.8779543,-87.628062,University of Illinois Chicago School of Law,901.3076923076923
+235 West Van Buren Street,Iconic Attractions,41.8765962,-87.6346578,235 Van Buren,134.84615384615384
+The Buckingham,Iconic Attractions,41.8848128,-87.6179561,The Buckingham (Chicago),82.23076923076923
+Harbor Point,Iconic Attractions,41.8849379,-87.6147978,Harbor Point (skyscraper),58.69230769230769
+North Harbor Tower,Iconic Attractions,41.8854441,-87.6154753,North Harbor Tower,85.38461538461539
+The Shoreham,Iconic Attractions,41.8867214,-87.6168263,The Shoreham,17.46153846153846
+The Parkshore,Iconic Attractions,41.8856684,-87.6147069,The Parkshore,89.46153846153847
+333 Wacker Drive,Iconic Attractions,41.8861417,-87.6359838,333 Wacker Drive,593.3846153846154
 Palmer Park,Parks & Outdoors,41.6908586,-87.6157858,Palmer Park (Chicago),53.23076923076923
 Hamilton Park,Parks & Outdoors,41.7616921,-87.6370249,Hamilton Park (Chicago),61.61538461538461
 Avondale Park,Parks & Outdoors,41.9415751,-87.7148385,Avondale Park (Chicago),38.92307692307692
 Bataan Park,Parks & Outdoors,41.8992935,-87.8456108,,
+321 North Clark,Iconic Attractions,41.8882523,-87.630618,321 North Clark,155.69230769230768
 Chopin Park,Parks & Outdoors,41.9431827,-87.7629734,Chopin Park,38.84615384615385
+Builders Building,Iconic Attractions,41.8865126,-87.6332527,Builders Building,161.15384615384616
+10 South LaSalle,Iconic Attractions,41.8816022,-87.632745,10 South LaSalle,136.84615384615384
+181 West Madison,Iconic Attractions,41.8815803,-87.6333577,181 West Madison Street,237.30769230769232
+OneEleven,Iconic Attractions,41.8865122,-87.6314558,OneEleven,358.7692307692308
+35 East Wacker,Iconic Attractions,41.8865278,-87.6267919,35 East Wacker,1106.6923076923076
+Burnham Center,Iconic Attractions,41.8828628,-87.6314195,Burnham Center,166.6153846153846
+Madison Plaza,Iconic Attractions,41.8823139,-87.6343433,200 West Madison,120.6923076923077
+Century Tower,Iconic Attractions,41.8860541,-87.6336591,Century Tower (Chicago),116.46153846153847
 Frederick C. Robie House,Iconic Attractions,41.7898086,-87.5959318,Robie House,5552.615384615385
 Trumbull Park,Parks & Outdoors,41.7063323,-87.5644807,Trumbull Park,72.23076923076923
 Grand Crossing Park,Parks & Outdoors,41.7549776,-87.6004228,Grand Crossing Park,27.692307692307693
+Equitable Building,Iconic Attractions,41.8896121,-87.6229913,Equitable Building (Chicago),445.38461538461536
 Mariano Park,Parks & Outdoors,41.901922,-87.6281538,Mariano Park,125.38461538461539
 Washington Square,Parks & Outdoors,41.899265,-87.6305847,Washington Square Park (Chicago),1184.923076923077
+Chicago Water Tower,Iconic Attractions,41.8971703,-87.624437,Chicago Water Tower,3481.076923076923
+Skybridge,Iconic Attractions,41.882741,-87.6467011,"Skybridge, Chicago",70.07692307692308
 Calumet Park,Parks & Outdoors,41.7155968,-87.5297006,Calumet Park,145.84615384615384
 Davis Square Park,Parks & Outdoors,41.8131245,-87.6675236,Davis Square (Chicago),32.53846153846154
 Fuller Park,Parks & Outdoors,41.8114197,-87.6346635,Fuller Park (Chicago park),53.61538461538461
 Shedd Park,Parks & Outdoors,41.8502235,-87.7167808,Shedd Park Fieldhouse,31.307692307692307
+155 North Wacker,Iconic Attractions,41.8848281,-87.6363203,155 North Wacker,201.53846153846155
 Cloud Gate (The Bean),Iconic Attractions,41.8826861,-87.6233406,Cloud Gate,21956.53846153846
+110 North Wacker (Bank of America Tower),Iconic Attractions,41.883754,-87.6374651,110 North Wacker,729.0
 Fountain of Time,Iconic Attractions,41.7867553,-87.6076412,Fountain of Time,1148.2307692307693
+American Medical Association,Iconic Attractions,41.8914269,-87.6273365,,
+One Illinois Center,Iconic Attractions,41.8876897,-87.6235768,Illinois Center,457.61538461538464
+333 North Michigan,Iconic Attractions,41.8878105,-87.6242101,333 North Michigan,335.53846153846155
+Chicago Title & Trust Building,Iconic Attractions,41.884911,-87.6305225,Grant Thornton Tower,291.2307692307692
+The Buckingham (Socony-Vacuum Building),Iconic Attractions,41.876771,-87.625421,Buckingham Building,59.69230769230769
 Kosciuszko Park,Parks & Outdoors,41.9309212,-87.7245091,Kosciuszko Park (Chicago),114.76923076923077
 Miro's Chicago,Iconic Attractions,41.8830686,-87.6303775,Miró's Chicago,359.46153846153845
+Reliance Building,Iconic Attractions,41.8828644,-87.6285383,Reliance Building,1184.6153846153845
 Monument With Standing Beast,Iconic Attractions,41.8847406,-87.6312138,Monument with Standing Beast,446.6923076923077
 Four Seasons,Iconic Attractions,41.8810937,-87.6297893,Four Seasons (Chagall),571.1538461538462
+Heller International Building,Iconic Attractions,41.8809122,-87.6404132,Heller International Building,374.46153846153845
+191 North Wacker,Iconic Attractions,41.8853711,-87.6364835,191 North Wacker,95.38461538461539
+120 North LaSalle,Iconic Attractions,41.8837108,-87.6329637,120 North LaSalle,120.76923076923077
+UBS Tower (One North Wacker),Iconic Attractions,41.8823313,-87.6361424,One North Wacker,511.46153846153845
+Michael A. Bilandic Building,Iconic Attractions,41.8848158,-87.6329204,Bilandic Building,129.07692307692307
+Randolph Tower,Iconic Attractions,41.8848346,-87.6336319,Randolph Tower,244.3846153846154
+Residence Inn Chicago Downtown/Loop (Roanoke Building),Iconic Attractions,41.8816856,-87.6319511,Roanoke Building,176.53846153846155
+The Columbian,Iconic Attractions,41.8677568,-87.624658,The Columbian (Chicago),65.0
+Northern Trust Bank,Iconic Attractions,41.8797266,-87.6364044,,
+"Club Quarters Hotel, Wacker at Michigan (Mather Tower)",Iconic Attractions,41.8876164,-87.6254422,Mather Tower,490.15384615384613
+London Guarantee Building,Iconic Attractions,41.8879557,-87.6250979,London Guarantee Building,534.6153846153846
+Heyworth Building,Iconic Attractions,41.881873,-87.6267032,,
+425 South Financial Place,Iconic Attractions,41.875949,-87.6322273,425 South Financial Place,189.46153846153845
 Jane Addams Hull-House Museum,Museums & Galleries,41.8716506,-87.647398,,
 Chicago Women's Park and Gardens,Parks & Outdoors,41.8571868,-87.6215118,Chicago Women's Park and Gardens,35.083333333333336
 Henry B. Clarke House,Museums & Galleries,41.8570672,-87.6218774,Henry B. Clarke House,361.84615384615387
+The Grant,Iconic Attractions,41.8671059,-87.6220347,The Grant,81.15384615384616
+University Hall,Iconic Attractions,41.8737759,-87.651001,University Hall (University of Illinois Chicago),178.53846153846155
 David and Alfred Smart Museum of Art,Museums & Galleries,41.7935122,-87.6001865,Smart Museum of Art,289.2307692307692
 Illinois Holocaust Museum Presents Experience360,Museums & Galleries,41.8890241,-87.6285862,,
+353 North Clark,Iconic Attractions,41.8889278,-87.6301472,353 North Clark,163.69230769230768
+NBC Tower,Iconic Attractions,41.889888,-87.6210333,NBC Tower,1600.7692307692307
+Waldorf Astoria Chicago,Iconic Attractions,41.8996921,-87.6276158,Waldorf Astoria Chicago,420.61538461538464
 Dunbar Park,Parks & Outdoors,41.8402261,-87.6202766,Dunbar Park (Chicago),32.0
 Armour Square Park,Parks & Outdoors,41.8336544,-87.6340047,Armour Square Park,85.61538461538461
+Chicago Place,Iconic Attractions,41.8953344,-87.6249444,Chicago Place,762.9230769230769
+Onterie Center,Iconic Attractions,41.8938587,-87.6162527,Onterie Center,111.84615384615384
+Ronald McDonald House,Iconic Attractions,41.8915318,-87.6222399,,
+Olympia Centre,Iconic Attractions,41.8962391,-87.6234942,Olympia Centre,278.7692307692308
 Irish American Heritage Center,Museums & Galleries,41.9653234,-87.7445686,,
 Balzekas Museum of Lithuanian Culture,Museums & Galleries,41.7746301,-87.7229824,Balzekas Museum of Lithuanian Culture,99.61538461538461
 Illinois Centennial Monument,Iconic Attractions,41.9283908,-87.7073273,Illinois Centennial Monument,259.9230769230769
+Time-Life Building,Iconic Attractions,41.8922134,-87.6197043,541 North Fairbanks Court,168.69230769230768
+River East Center,Iconic Attractions,41.8914329,-87.6181949,River East Center,96.15384615384616
+North Pier Tower,Iconic Attractions,41.8908347,-87.6147718,North Pier Apartments,59.46153846153846
+400 East Ohio Street,Iconic Attractions,41.8928381,-87.6174108,400 East Ohio Street,38.30769230769231
 Berger Park,Parks & Outdoors,41.9952878,-87.6549447,Berger Park,67.61538461538461
 Austin Town Hall Park,Parks & Outdoors,41.8885148,-87.7657918,Austin Town Hall Park,66.84615384615384
 National Hellenic Museum,Museums & Galleries,41.8770017,-87.6468455,National Hellenic Museum,168.84615384615384
@@ -128,12 +203,17 @@ Alexander Von Humboldt Monument,Iconic Attractions,41.9054797,-87.7014749,Statue
 Leif Ericsson Monument,Iconic Attractions,41.9067221,-87.7015621,Statue of Leif Erikson (Chicago),74.92307692307692
 Swedish American Museum,Museums & Galleries,41.9766738,-87.668062,Swedish American Museum,143.69230769230768
 Leather Archives and Museum,Museums & Galleries,41.9986421,-87.6683357,Leather Archives & Museum,990.9230769230769
+The Montgomery,Iconic Attractions,41.8960286,-87.6421806,The Montgomery (Chicago),261.0
 Intuit: The Center for Intuitive and Outsider Art,Museums & Galleries,41.8953748,-87.6546037,Intuit: The Center for Intuitive and Outsider Art,27.23076923076923
 Biograph Theatre,Iconic Attractions,41.9265205,-87.6498015,Biograph Theater,1838.6153846153845
+Park Place Tower,Iconic Attractions,41.9536581,-87.6466276,Park Place Tower,143.6153846153846
+Uptown Theatre,Iconic Attractions,41.9695488,-87.6600898,Uptown Theatre (Chicago),1342.6153846153845
 Chinese American Museum of Chicago,Museums & Galleries,41.8512035,-87.6335249,Chinese American Museum of Chicago,88.0
 Chess Studio,Museums & Galleries,41.8536137,-87.6242192,,
+Crain Communications Building,Iconic Attractions,41.8848264,-87.6249715,Crain Communications Building,1367.8461538461538
 Equestrian Indians (The Spearman),Iconic Attractions,41.8754986,-87.623491,,
 Lion “in an attitude of defiance”,Iconic Attractions,41.8793952,-87.624144,Lions (Kemeys),380.9230769230769
+55 East Erie,Iconic Attractions,41.8938736,-87.6261119,55 East Erie Street,84.3076923076923
 Charnley-Pesky House Museum (James Charnley House),Museums & Galleries,41.9076645,-87.627534,James Charnley House,650.0769230769231
 International Museum of Surgical Science,Museums & Galleries,41.9102188,-87.6267398,International Museum of Surgical Science,290.84615384615387
 A. Philip Randolph Pullman Porter Museum,Museums & Galleries,41.7053741,-87.6030693,,
@@ -145,9 +225,15 @@ Jane Addams Park,Parks & Outdoors,41.8624552,-87.6627126,Addams Park,31.76923076
 Maggie Daley Park,Parks & Outdoors,41.8827196,-87.6176085,Maggie Daley Park,446.0
 Western Springs Water Tower,Museums & Galleries,41.8097533,-87.9009195,Western Springs Water Tower,82.6923076923077
 William W. Powers State Recreation Area,Parks & Outdoors,41.6629746,-87.5322686,William W. Powers State Recreation Area,94.23076923076923
+Chase Tower,Iconic Attractions,41.8816195,-87.6301407,Chase Tower (Chicago),2250.923076923077
+Google Center,Iconic Attractions,41.8851191,-87.6316819,James R. Thompson Center,3498.5384615384614
 Polk Bros Park,Parks & Outdoors,41.8913122,-87.6116581,Polk Bros Park,125.46153846153847
 Chicago Stock Exchange Arch,Iconic Attractions,41.8806744,-87.6211756,Chicago Stock Exchange Arch,284.2307692307692
 Bronzeville Children's Museum,Museums & Galleries,41.7257228,-87.5844938,,
+River Point,Iconic Attractions,41.8861772,-87.6394532,River Point,539.0
+Loews Chicago Downtown,Iconic Attractions,41.8898641,-87.6190926,Loews Hotel Tower,271.0
+London House Chicago (London House),Iconic Attractions,41.8877548,-87.625305,,
+Optima Signature,Iconic Attractions,41.8915111,-87.6215993,Optima Signature,86.15384615384616
 Wintrust Arena,Iconic Attractions,41.8536605,-87.6213757,Wintrust Arena,3769.4615384615386
 Wonder Works Children's Museum,Museums & Galleries,41.9088713,-87.7870661,Wonder Works,46.92307692307692
 Cicero Stadium,Iconic Attractions,41.8542938,-87.7538187,Cicero Stadium (Illinois),324.38461538461536
@@ -155,15 +241,20 @@ Ernest Hemingway Birthplace Museum,Museums & Galleries,41.8927733,-87.7950512,Bi
 Little Village Arch,Iconic Attractions,41.8445498,-87.7033179,"South Lawndale, Chicago",1393.7692307692307
 Paseo Bourica Gateway Flags,Iconic Attractions,41.9030198,-87.6881518,Paseo Boricua,354.0769230769231
 Chicago Riverwalk,Parks & Outdoors,41.8872333,-87.6258243,Chicago Riverwalk,896.0769230769231
+Wolf Point East,Iconic Attractions,41.8877919,-87.6367607,Wolf Point East Tower,282.7692307692308
+Essex on the Park,Iconic Attractions,41.8714845,-87.6247395,Essex on the Park,151.76923076923077
 Buckingham Fountain (Clarence Buckingham Memorial Fountain),Iconic Attractions,41.8758019,-87.6189721,Buckingham Fountain,3018.846153846154
 Impact Field,Iconic Attractions,41.9780661,-87.8710568,Impact Field,593.8461538461538
 Statue of the Republic,Iconic Attractions,41.7796062,-87.5799028,Statue of The Republic,1114.3846153846155
 Benjamin Franklin,Iconic Attractions,41.9138025,-87.6310959,Statue of Benjamin Franklin (Chicago),39.15384615384615
 Graue Mill (name=Graue Mill & Museum),Museums & Galleries,41.8205839,-87.9274892,Graue Mill,215.69230769230768
+151 North Franklin,Iconic Attractions,41.8848307,-87.6348931,151 North Franklin,307.0769230769231
 John Alexander Logan Monument,Iconic Attractions,41.8706199,-87.6234634,General John Logan Memorial,293.3076923076923
 Man Enters The Cosmos,Iconic Attractions,41.8667661,-87.6071237,Man Enters the Cosmos,588.6153846153846
 Park No. 474,Parks & Outdoors,41.8355094,-87.6275114,Park No. 474,169.07692307692307
+Salesforce Tower,Iconic Attractions,41.8873861,-87.6376602,Salesforce Tower Chicago,1160.5384615384614
 Captain on the Helm,Iconic Attractions,41.8907192,-87.6096979,Captain on the Helm,46.23076923076923
+1000M,Iconic Attractions,41.8699141,-87.6248339,1000M,680.1538461538462
 Ogden Plaza,Parks & Outdoors,41.890282,-87.6199496,Ogden Plaza Park,23.53846153846154
 Crossing,Iconic Attractions,41.8885748,-87.6325313,Crossing (sculpture),27.923076923076923
 Constellation,Iconic Attractions,41.8862642,-87.638929,Constellation (sculpture),74.0
@@ -171,6 +262,8 @@ National Public Housing Museum,Museums & Galleries,41.8698693,-87.6597742,Nation
 Rate Field (U.S. Cellular Field),Iconic Attractions,41.8296742,-87.6337933,Rate Field,11533.0
 Hawthorne Race Course,Iconic Attractions,41.8265275,-87.7485702,Hawthorne Race Course,871.9230769230769
 Marquette and Joliet Explorer Statue,Iconic Attractions,41.8053075,-87.8030562,Chicago Portage National Historic Site,192.76923076923077
+Howard Brown Health - Halsted,Iconic Attractions,41.945827,-87.6491513,,
+400 Lake Shore - North Tower,Iconic Attractions,41.8898749,-87.6148778,400 Lake Shore,2340.0
 Robert Cavalier de LaSalle,Iconic Attractions,41.9133732,-87.6327487,Statue of Robert Cavelier de La Salle,54.23076923076923
 Richard Oglesby Monument,Iconic Attractions,41.9301485,-87.6370807,Statue of Richard J. Oglesby,47.07692307692308
 Alexander Hamilton Monument,Iconic Attractions,41.9317129,-87.6384365,Statue of Alexander Hamilton (Chicago),256.3076923076923
@@ -197,6 +290,7 @@ Shedd Aquarium,Zoos & Family,41.8676159,-87.6136792,,
 River Esplanade,Parks & Outdoors,41.8890719,-87.6189671,River Esplanade Park,29.53846153846154
 Gold Star Families Park (Gold Star Families Memorial and Park),Parks & Outdoors,41.8627035,-87.6141141,Gold Star Families Memorial and Park,44.23076923076923
 Brookfield Zoo Chicago (Chicago Zoological Park),Zoos & Family,41.8340002,-87.8367188,Brookfield Zoo,511.7692307692308
+Lake Point Tower,Iconic Attractions,41.8915312,-87.61278,Lake Point Tower,1595.7692307692307
 Grant Park,Parks & Outdoors,41.8765883,-87.6183046,Grant Park (Chicago),3744.0
 Harold Washington Park,Parks & Outdoors,41.8026153,-87.5833185,Harold Washington Park,71.6923076923077
 Midway Plaisance,Parks & Outdoors,41.7866976,-87.5963239,Midway Plaisance,1823.3076923076924
@@ -261,6 +355,8 @@ Richardson Art Gallery,Museums & Galleries,41.9249194,-87.6551572,,
 Fine Art Gallery,Museums & Galleries,41.8132923,-87.8784533,,
 gallery 1871,Museums & Galleries,41.9152208,-87.6553058,,
 Emily Oak Nature Center,Museums & Galleries,42.0218042,-87.7458133,,
+Franklin Center North Tower,Iconic Attractions,41.8802888,-87.6347327,AT&T Corporate Center,151.3846153846154
+Franklin Center South Tower,Iconic Attractions,41.8797475,-87.6347593,AT&T Corporate Center,151.3846153846154
 Hyde Park Historical Society Museum,Museums & Galleries,41.7942738,-87.5875619,,
 Columbia Yacht Club (MV Abegweit),Iconic Attractions,41.8839375,-87.6119816,MV Abegweit (1947),320.2307692307692
 Walt Disney Birthplace House,Museums & Galleries,41.9206229,-87.733074,,
@@ -287,6 +383,7 @@ Casa Italia,Museums & Galleries,41.9010531,-87.8804172,,
 Sagawau Environmental Learning Center,Museums & Galleries,41.6892713,-87.9257493,,
 Oak Park River Forest Museum,Museums & Galleries,41.8877958,-87.7795049,,
 16 Inch Softball Hall of Fame Museum,Museums & Galleries,41.8723575,-87.8152118,,
+One Bennett Park,Iconic Attractions,41.8914917,-87.6157218,One Bennett Park,434.9230769230769
 Elmhurst Art Museum,Museums & Galleries,41.8978837,-87.9431207,,
 Flagg Creek Historical Museum,Museums & Galleries,41.7549288,-87.8957869,,
 The Children's Museum in Oak Lawn,Museums & Galleries,41.7197074,-87.7476503,,
