@@ -1,6 +1,7 @@
-import streamlit as st 
-import urllib.request 
-import json 
+import streamlit as st
+import urllib.request
+import urllib.parse
+import json
 import pandas as pd 
 import folium 
 from geopy.distance import geodesic 
@@ -52,8 +53,7 @@ def load_l_stops(url):
 
     df['routes'] = line_colors
 
-    # map_id is the parent station ID -- it is what the CTA ridership
-    # dataset keys on, so keep it for the busyness lookup
+    # map_id joins to the ridership dataset
     df = df[['stop_id', 'map_id', 'stop_name', 'latitude', 'longitude', 'routes']]
     df = df.dropna(subset=['stop_id', 'stop_name', 'latitude', 'longitude'])
     df = df.drop_duplicates(['stop_id'])
@@ -195,7 +195,7 @@ def get_closest_stop(landmark_latlon, df):
     chosen_stop.append(closest['stop_type'])
     chosen_stop.append(closest['distance'])
     chosen_stop.append(closest.get('routes', 'Unknown'))
-    chosen_stop.append(closest.get('map_id'))  # parent station ID (L stations only; NaN for bus stops)
+    chosen_stop.append(closest.get('map_id'))  # NaN for bus stops
 
     return chosen_stop  # Return the chosen stop
 
@@ -331,12 +331,7 @@ DAY_NAMES = ["Sunday", "Monday", "Tuesday", "Wednesday",
 
 
 def _add_tiers(df):
-    """Label each station-day Quiet/Moderate/Busy relative to that station's own week.
-
-    Ranking within the station matters: 3,000 entries is a busy day at a
-    small station and a dead day at Lake/State, so an absolute threshold
-    would mislabel both.
-    """
+    """Label each station-day Quiet/Moderate/Busy relative to that station's own week."""
     pct = df.groupby('station_id')['expected_rides'].rank(pct=True)
     df['tier'] = pd.cut(
         pct, bins=[0, 1/3, 2/3, 1],
@@ -348,18 +343,11 @@ def _add_tiers(df):
 
 @st.cache_data
 def load_ridership_profile():
-    """Return (profile_df, source_label) for expected daily entries per L station.
-
-    profile_df columns: station_id (str, joins to map_id in the L stops data),
-    dow (0=Sunday..6=Saturday), expected_rides, tier.
-    Returns (None, None) if neither the lookup file nor the API is available.
-    """
+    """Return (profile_df, source_label), or (None, None) if unavailable."""
     lookup_path = os.path.join(os.path.dirname(__file__), 'data', 'ridership_lookup.csv')
     if os.path.exists(lookup_path):
         df = pd.read_csv(lookup_path, dtype={'station_id': str})
         df = df.rename(columns={'pred_rides': 'expected_rides'})
-        # The notebook exports one row per station x dow x month;
-        # keep the current month's predictions
         if 'month' in df.columns:
             df = df[df['month'] == datetime.date.today().month].drop(columns='month')
         source = 'model prediction'
@@ -383,13 +371,143 @@ def load_ridership_profile():
     return df, source
 
 
-def get_busyness(map_id, dow, profile_df):
-    """Busyness info for one L station on one day of week.
+# NEW FEATURE: Tourist attractions from OpenStreetMap
 
-    Returns a dict with tier, expected_rides, and pct_vs_typical (percent
-    difference from that station's average day), or None if the station
-    isn't in the ridership data (e.g. bus stops, or new stations).
-    """
+CHICAGO_BBOX = "41.64,-87.95,42.03,-87.50"
+
+OVERPASS_ENDPOINTS = [
+    "https://overpass-api.de/api/interpreter",
+    "https://overpass.kumi.systems/api/interpreter",
+    "https://maps.mail.ru/osm/tools/overpass/api/interpreter",
+]
+OVERPASS_URL = OVERPASS_ENDPOINTS[0]
+
+OVERPASS_QUERY = f"""
+[out:json][timeout:90];
+(
+  nwr["tourism"~"^(museum|gallery|zoo|aquarium|theme_park)$"]["name"]({CHICAGO_BBOX});
+  nwr["tourism"~"^(attraction|viewpoint|artwork)$"]["name"]["wikipedia"]({CHICAGO_BBOX});
+  nwr["leisure"="park"]["name"]["wikipedia"]({CHICAGO_BBOX});
+);
+out center tags;
+"""
+
+ARCHITECTURE_CATEGORY = "Architecture (Historic Landmarks)"
+
+OSM_CATEGORY_LABELS = [
+    "Iconic Attractions",
+    "Museums & Galleries",
+    "Parks & Outdoors",
+    "Zoos & Family",
+]
+
+
+def _osm_category(tags):
+    tourism = tags.get("tourism", "")
+    if tourism in ("museum", "gallery"):
+        return "Museums & Galleries"
+    if tourism in ("zoo", "aquarium", "theme_park"):
+        return "Zoos & Family"
+    if tourism in ("attraction", "viewpoint", "artwork"):
+        return "Iconic Attractions"
+    if tags.get("leisure") == "park":
+        return "Parks & Outdoors"
+    return None
+
+
+def _wiki_title(tags):
+    wiki = tags.get("wikipedia", "")
+    if wiki.startswith("en:"):
+        return wiki[3:]
+    return None
+
+
+def _display_name(tags):
+    """Official name, with the local nickname if one exists (Cloud Gate (The Bean))."""
+    name = tags.get("name")
+    nickname = tags.get("loc_name") or tags.get("alt_name") or tags.get("short_name")
+    if nickname and nickname.lower() != name.lower():
+        return f"{name} ({nickname})"
+    return name
+
+
+@st.cache_data
+def load_osm_attractions():
+    """Chicago tourist attractions from data/attractions.csv, or Overpass if absent."""
+    cols = ['landmark_name', 'category', 'latitude', 'longitude', 'wiki_title', 'monthly_views']
+    csv_path = os.path.join(os.path.dirname(__file__), 'data', 'attractions.csv')
+    if os.path.exists(csv_path):
+        df = pd.read_csv(csv_path)
+        df = df.rename(columns={'name': 'landmark_name'})
+        for c in cols:
+            if c not in df.columns:
+                df[c] = np.nan
+        return df[cols]
+
+    payload = None
+    data = urllib.parse.urlencode({'data': OVERPASS_QUERY}).encode()
+    for endpoint in OVERPASS_ENDPOINTS:
+        try:
+            req = urllib.request.Request(endpoint, data=data)
+            req.add_header('User-Agent', 'chicago-tourist-transport-guide (github.com/lewilliam888)')
+            with urllib.request.urlopen(req, timeout=90) as resp:
+                payload = json.loads(resp.read().decode())
+            break
+        except Exception:
+            continue
+    if payload is None:
+        st.warning("Could not load OSM attractions (all Overpass servers busy). Showing historic landmarks only.")
+        return pd.DataFrame(columns=cols)
+
+    rows = []
+    for el in payload.get('elements', []):
+        tags = el.get('tags', {})
+        name = tags.get('name')
+        category = _osm_category(tags)
+        if not name or category is None:
+            continue
+        lat = el.get('lat') or el.get('center', {}).get('lat')
+        lon = el.get('lon') or el.get('center', {}).get('lon')
+        if lat is None or lon is None:
+            continue
+        rows.append({
+            'landmark_name': _display_name(tags),
+            'category': category,
+            'latitude': float(lat),
+            'longitude': float(lon),
+            'wiki_title': _wiki_title(tags),
+            'monthly_views': np.nan,
+            '_wikidata': tags.get('wikidata'),
+        })
+
+    df = pd.DataFrame(rows)
+    if len(df) == 0:
+        return pd.DataFrame(columns=cols)
+
+    # same place can appear as both a node and a way
+    has_wd = df['_wikidata'].notna()
+    df = pd.concat([
+        df[has_wd].drop_duplicates('_wikidata'),
+        df[~has_wd],
+    ])
+    df = df.drop_duplicates(['landmark_name', 'category'])
+    return df[cols].reset_index(drop=True)
+
+
+def build_attraction_pool(landmark_df, osm_df):
+    """Combine historic landmarks (as the Architecture category) with OSM attractions."""
+    arch = landmark_df.copy()
+    arch['category'] = ARCHITECTURE_CATEGORY
+    arch['wiki_title'] = None
+    arch['monthly_views'] = np.nan
+    keep = ['landmark_name', 'category', 'latitude', 'longitude', 'wiki_title', 'monthly_views']
+    if osm_df is None or len(osm_df) == 0:
+        return arch[keep].reset_index(drop=True)
+    return pd.concat([arch[keep], osm_df[keep]], ignore_index=True)
+
+
+def get_busyness(map_id, dow, profile_df):
+    """Busyness for one station on one day of week, or None if no data."""
     if profile_df is None or map_id is None or pd.isna(map_id):
         return None
     station = profile_df[profile_df['station_id'] == str(map_id)]

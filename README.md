@@ -1,18 +1,20 @@
 # Chicago Tourist Transportation Guide
 
-Streamlit app for exploring Chicago's 317 historic landmarks through the CTA network. Pick a landmark and it finds the nearest transit stop, estimates how crowded that station will be on the day of your visit, and can group landmarks into walkable clusters.
+Streamlit app for exploring Chicago attractions through the CTA network. Pick an attraction and it finds the nearest transit stop, estimates how crowded that station will be on the day of your visit, and can group attractions into walkable clusters ranked by popularity.
 
 **Live demo:** <https://chicago-tourist-transportation-guide.streamlit.app/>
 
 ## Features
 
-Data comes from four City of Chicago Open Data endpoints: 302 L stations, 10,760+ bus stops, 317 designated landmarks, and daily station entry counts.
+Data comes from six sources: four City of Chicago Open Data endpoints (302 L stations, 10,760+ bus stops, 317 historic landmarks, daily station entries), OpenStreetMap for tourist attractions, and Wikipedia pageviews for popularity.
 
-**Nearest transit.** Computes geodesic distance from the selected landmark to every stop and returns the closest, with walking time, fare, and a folium map connecting the two points.
+**Attraction types.** A sidebar filter with five categories: Iconic Attractions, Museums & Galleries, Parks & Outdoors, Zoos & Family (all from OSM), and Architecture (the city's historic landmarks list). With popularity data present you can also restrict to the top N attractions by Wikipedia views.
+
+**Nearest transit.** Computes geodesic distance from the selected attraction to every stop and returns the closest, with walking time, fare, and a folium map connecting the two points.
 
 **Expected crowds.** Predicts how busy the nearest L station will be on your planned visit day using CTA ridership history. Details below.
 
-**Walkable neighborhoods.** DBSCAN clustering over landmark coordinates. Sliders control max walking distance (`eps`) and minimum cluster size.
+**Walkable neighborhoods.** DBSCAN clustering over the filtered attractions. Sliders control max walking distance (`eps`) and minimum cluster size. When popularity data exists, clusters are ranked by combined Wikipedia views, so the first result is the highest-value walkable area for the types you picked.
 
 ## Busyness prediction
 
@@ -23,6 +25,14 @@ By default the app fetches each station's average entries per day of week in one
 For better estimates, `notebooks/ridership_model.ipynb` trains a `HistGradientBoostingRegressor` on station, day of week, month, week of year, and a federal holiday flag. Train is 2022 to 2024, test is 2025 onward, and the model is scored against a per-station day-of-week mean baseline on MAE and MAPE. The notebook exports `data/ridership_lookup.csv` with per-month predictions, and the app uses that file automatically when it exists.
 
 The data is daily totals, so the app predicts which days are busy rather than which hours. A "Busy" Saturday downtown can still be empty at 8am. Bus stops get no estimate because CTA publishes bus ridership per route, not per stop.
+
+## Attraction sources and popularity
+
+The city's landmarks dataset is a historic preservation list. It is excellent for architecture but has no Millennium Park or Navy Pier, so the app pulls actual tourist attractions from OpenStreetMap through the Overpass API (free, no key). Elements are categorized from their OSM tags, and low-signal categories like artwork require a `wikipedia` tag, which doubles as a quality filter.
+
+Popularity comes from Wikipedia. `notebooks/attractions_popularity.ipynb` resolves each attraction to an English Wikipedia article, using the OSM `wikipedia` tag when present and a geosearch with string-similarity matching otherwise, then averages the last 12 months of pageviews from the Wikimedia REST API. The export (`data/attractions.csv`) unlocks the top-N filter and cluster ranking. Pageviews measure reading interest rather than foot traffic, so the score is used for ranking only and never shown as visitor counts.
+
+Without the export the app still works: it queries Overpass live and simply hides the popularity controls.
 
 ## Why DBSCAN
 
@@ -38,12 +48,14 @@ Streamlit, pandas, numpy, scikit-learn, folium + streamlit-folium, geopy, matplo
 
 ```
 .
-├── app.py                          # Streamlit UI
-├── helpers.py                      # loaders, distance calcs, DBSCAN, busyness
+├── app.py                             # Streamlit UI
+├── helpers.py                         # loaders, distance calcs, DBSCAN, busyness, OSM
 ├── notebooks/
-│   └── ridership_model.ipynb       # ridership model, exports the lookup
+│   ├── ridership_model.ipynb          # ridership model, exports the lookup
+│   └── attractions_popularity.ipynb   # Wikipedia matching + pageviews, exports attractions
 ├── data/
-│   └── ridership_lookup.csv        # model predictions (created by the notebook)
+│   ├── ridership_lookup.csv           # ridership model predictions
+│   └── attractions.csv                # attractions with popularity (created by the notebook)
 ├── requirements.txt
 └── README.md
 ```
@@ -57,7 +69,7 @@ pip install -r requirements.txt
 streamlit run app.py
 ```
 
-First load takes a few seconds while the datasets download and cache. To regenerate the model lookup, run the notebook top to bottom. The first run downloads about 200k rows, cached locally after that.
+First load takes a few seconds while the datasets download and cache. Two optional notebooks regenerate the committed data files: `ridership_model.ipynb` (downloads about 200k rows on first run, cached after) and `attractions_popularity.ipynb` (a few minutes of throttled Wikipedia API calls).
 
 ## Limitations
 

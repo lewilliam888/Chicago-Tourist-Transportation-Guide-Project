@@ -26,6 +26,8 @@ with st.spinner("Loading Chicago landmarks and transit data..."):
     landmark_df = helpers.load_landmarks(landmark_url)
     transit_df = helpers.combine_transit_stops(train_df, bus_df)
     ridership_profile, ridership_source = helpers.load_ridership_profile()
+    osm_df = helpers.load_osm_attractions()
+    pool_df = helpers.build_attraction_pool(landmark_df, osm_df)
 
 transit_df = transit_df.rename(columns={'latitude': 'lat', 'longitude': 'lon'})
 transit_df = transit_df.reset_index(drop=True)
@@ -43,15 +45,45 @@ app_mode = st.sidebar.radio(
     index=0
 )
 
+# Attraction type filter (applies to both modes)
+st.sidebar.markdown("---")
+st.sidebar.subheader("Attraction Types")
+present = set(str(c) for c in pool_df['category'].dropna())
+available_categories = [c for c in
+                        [helpers.ARCHITECTURE_CATEGORY] + helpers.OSM_CATEGORY_LABELS
+                        if c in present]
+selected_categories = st.sidebar.multiselect(
+    "Show attractions of type:",
+    available_categories,
+    default=available_categories
+)
+poi_df = pool_df[pool_df['category'].isin(selected_categories)].copy()
+
+# Popularity filter (needs data/attractions.csv)
+popularity_available = poi_df['monthly_views'].notna().any()
+if popularity_available:
+    top_only = st.sidebar.checkbox("Top attractions only (by Wikipedia views)", value=False)
+    if top_only:
+        top_n = st.sidebar.slider("How many top attractions:", 10, 200, 75, step=5)
+        ranked = poi_df[poi_df['monthly_views'].notna()].nlargest(top_n, 'monthly_views')
+        # landmarks have no pageview data
+        arch = poi_df[poi_df['category'] == helpers.ARCHITECTURE_CATEGORY]
+        poi_df = ranked if len(ranked) else arch
+
+if len(poi_df) == 0:
+    st.warning("No attractions match the current filters. Select at least one attraction type.")
+    st.stop()
+poi_df = poi_df.reset_index(drop=True)
+
 st.sidebar.markdown("---")
 
 if app_mode == "Find Nearest Transit":
-    st.sidebar.header("Select a Landmark")
-    st.sidebar.markdown("Choose from Chicago's official landmarks:")
+    st.sidebar.header("Select an Attraction")
+    st.sidebar.markdown("Filtered by the attraction types above:")
 
-    landmark_names = sorted(landmark_df['landmark_name'].unique())
+    landmark_names = sorted(poi_df['landmark_name'].unique())
     selected_landmark = st.sidebar.selectbox(
-        "Choose a landmark:",
+        "Choose an attraction:",
         landmark_names,
         index=0
     )
@@ -74,7 +106,7 @@ if app_mode == "Find Nearest Transit":
         index=today_dow
     )
 
-    landmark_info = landmark_df[landmark_df['landmark_name'] == selected_landmark].iloc[0]
+    landmark_info = poi_df[poi_df['landmark_name'] == selected_landmark].iloc[0]
     landmark_latlon = (landmark_info['latitude'], landmark_info['longitude'])
 
     if transit_type_filter == "L Train Station Only":
@@ -107,7 +139,7 @@ if app_mode == "Find Nearest Transit":
         st.markdown("**Stop Type**")
         st.info(closest_stop[4])
 
-    # NEW FEATURE: expected crowds at the nearest L station
+    # NEW FEATURE: expected crowds
     if closest_stop[4] == 'L Train Station':
         busyness = helpers.get_busyness(
             closest_stop[7], helpers.DAY_NAMES.index(visit_day), ridership_profile
@@ -147,10 +179,13 @@ if app_mode == "Find Nearest Transit":
     with st.expander("ℹ️ Detailed Information"):
         col_a, col_b = st.columns(2)
         with col_a:
-            st.write("**Landmark Details:**")
+            st.write("**Attraction Details:**")
             st.write(f"- **Name:** {landmark_info['landmark_name']}")
-            if 'address' in landmark_info and pd.notna(landmark_info['address']):
+            st.write(f"- **Type:** {landmark_info['category']}")
+            if 'address' in landmark_info and pd.notna(landmark_info.get('address')):
                 st.write(f"- **Address:** {landmark_info['address']}")
+            if pd.notna(landmark_info.get('monthly_views')):
+                st.write(f"- **Wikipedia views:** {landmark_info['monthly_views']:,.0f}/month")
             st.write(f"- **Coordinates:** {landmark_info['latitude']:.6f}, {landmark_info['longitude']:.6f}")
         with col_b:
             fare = helpers.get_fare_info(closest_stop[4])
@@ -175,7 +210,7 @@ else:
         min_value=2, max_value=10, value=3, step=1
     )
     
-    clustered_df = helpers.cluster_landmarks(landmark_df, eps_miles=eps_miles, min_samples=min_samples)
+    clustered_df = helpers.cluster_landmarks(poi_df, eps_miles=eps_miles, min_samples=min_samples)
     
     n_clusters = len(set(clustered_df['cluster'])) - (1 if -1 in clustered_df['cluster'].values else 0)
     n_noise = (clustered_df['cluster'] == -1).sum()
@@ -200,13 +235,28 @@ else:
     st_folium(cluster_map, width=1400, height=600)
     
     with st.expander("📋 Browse Clusters"):
-        for cluster_id in sorted(clustered_df['cluster'].unique()):
-            if cluster_id == -1:
-                continue
+        cluster_ids = [c for c in clustered_df['cluster'].unique() if c != -1]
+        # most popular clusters first
+        if clustered_df['monthly_views'].notna().any():
+            cluster_ids = sorted(
+                cluster_ids,
+                key=lambda c: clustered_df.loc[clustered_df['cluster'] == c, 'monthly_views'].sum(),
+                reverse=True
+            )
+        else:
+            cluster_ids = sorted(cluster_ids)
+        for cluster_id in cluster_ids:
             cluster_landmarks_df = clustered_df[clustered_df['cluster'] == cluster_id]
-            st.markdown(f"**Cluster {cluster_id}** ({len(cluster_landmarks_df)} landmarks)")
-            for name in cluster_landmarks_df['landmark_name'].tolist():
-                st.write(f"- {name}")
+            views = cluster_landmarks_df['monthly_views'].sum()
+            header = f"**Cluster {cluster_id}** ({len(cluster_landmarks_df)} attractions"
+            if views > 0:
+                header += f", {views:,.0f} Wikipedia views/month"
+            header += ")"
+            st.markdown(header)
+            names = cluster_landmarks_df.sort_values('monthly_views', ascending=False)
+            for _, r in names.iterrows():
+                suffix = f" ({r['monthly_views']:,.0f} views/mo)" if pd.notna(r['monthly_views']) else ""
+                st.write(f"- {r['landmark_name']}{suffix}")
 
 # Information about transit types
 st.sidebar.markdown("---")
@@ -219,10 +269,11 @@ st.sidebar.markdown("""
 # Statistics
 st.sidebar.markdown("---")
 st.sidebar.subheader("Data Statistics")
-st.sidebar.write(f"Total Landmarks: {len(landmark_df)}")
+st.sidebar.write(f"Attractions shown: {len(poi_df)}")
+st.sidebar.write(f"Historic Landmarks: {len(landmark_df)}")
+st.sidebar.write(f"OSM Attractions: {len(osm_df)}")
 st.sidebar.write(f"Total L Stations: {len(train_df)}")
 st.sidebar.write(f"Total Bus Stops: {len(bus_df)}")
-st.sidebar.write(f"Total Transit Stops: {len(transit_df)}")
 
 # Footer
 st.markdown("---")
